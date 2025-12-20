@@ -1,0 +1,640 @@
+<?php
+/**
+ * Scripts API
+ * Handles CRUD operations for scripts
+ */
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth-check.php';
+
+$action = $_GET['action'] ?? $_POST['action'] ?? '';
+
+switch ($action) {
+    // Public endpoints
+    case 'public-list':
+        getPublicScripts();
+        break;
+    case 'public-get':
+        getPublicScript();
+        break;
+    case 'download':
+        downloadScript();
+        break;
+
+    // Admin endpoints (require auth)
+    case 'list':
+        requireAuthApi();
+        getScripts();
+        break;
+    case 'get':
+        requireAuthApi();
+        getScript();
+        break;
+    case 'create':
+        requireAuthApi();
+        createScript();
+        break;
+    case 'update':
+        requireAuthApi();
+        updateScript();
+        break;
+    case 'delete':
+        requireAuthApi();
+        deleteScript();
+        break;
+    case 'toggle-status':
+        requireAuthApi();
+        toggleStatus();
+        break;
+    case 'stats':
+        requireAuthApi();
+        getStats();
+        break;
+
+    default:
+        errorResponse('Invalid action', 400);
+}
+
+/**
+ * Get all scripts (admin)
+ */
+function getScripts() {
+    try {
+        $db = getDB();
+
+        $page = max(1, intval($_GET['page'] ?? 1));
+        $limit = max(1, min(100, intval($_GET['limit'] ?? 20)));
+        $offset = ($page - 1) * $limit;
+
+        // Filters
+        $where = [];
+        $params = [];
+
+        if (!empty($_GET['application'])) {
+            $where[] = "application = ?";
+            $params[] = $_GET['application'];
+        }
+        if (!empty($_GET['status'])) {
+            $where[] = "status = ?";
+            $params[] = $_GET['status'];
+        }
+        if (!empty($_GET['price_type'])) {
+            $where[] = "price_type = ?";
+            $params[] = $_GET['price_type'];
+        }
+        if (!empty($_GET['search'])) {
+            $where[] = "(name LIKE ? OR short_description LIKE ?)";
+            $searchTerm = '%' . $_GET['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+
+        $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        // Get total count
+        $countSql = "SELECT COUNT(*) FROM scripts $whereClause";
+        $stmt = $db->prepare($countSql);
+        $stmt->execute($params);
+        $total = $stmt->fetchColumn();
+
+        // Get scripts
+        $sql = "SELECT * FROM scripts $whereClause ORDER BY created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $scripts = $stmt->fetchAll();
+
+        // Get images for each script
+        foreach ($scripts as &$script) {
+            $stmt = $db->prepare("SELECT * FROM script_images WHERE script_id = ? ORDER BY display_order");
+            $stmt->execute([$script['id']]);
+            $script['images'] = $stmt->fetchAll();
+        }
+
+        successResponse([
+            'scripts' => $scripts,
+            'total' => (int)$total,
+            'page' => $page,
+            'limit' => $limit,
+            'total_pages' => ceil($total / $limit)
+        ]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Get single script (admin)
+ */
+function getScript() {
+    $id = intval($_GET['id'] ?? 0);
+    if (!$id) {
+        errorResponse('Script ID is required');
+    }
+
+    try {
+        $db = getDB();
+
+        $stmt = $db->prepare("SELECT * FROM scripts WHERE id = ?");
+        $stmt->execute([$id]);
+        $script = $stmt->fetch();
+
+        if (!$script) {
+            errorResponse('Script not found', 404);
+        }
+
+        // Get images
+        $stmt = $db->prepare("SELECT * FROM script_images WHERE script_id = ? ORDER BY display_order");
+        $stmt->execute([$id]);
+        $script['images'] = $stmt->fetchAll();
+
+        // Get videos
+        $stmt = $db->prepare("SELECT * FROM script_videos WHERE script_id = ? ORDER BY display_order");
+        $stmt->execute([$id]);
+        $script['videos'] = $stmt->fetchAll();
+
+        successResponse(['script' => $script]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Create new script
+ */
+function createScript() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        errorResponse('Method not allowed', 405);
+    }
+
+    // Get input (support both JSON and form data)
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (strpos($contentType, 'application/json') !== false) {
+        $input = json_decode(file_get_contents('php://input'), true);
+    } else {
+        $input = $_POST;
+    }
+
+    // Validate required fields
+    $required = ['name', 'application', 'short_description'];
+    foreach ($required as $field) {
+        if (empty($input[$field])) {
+            errorResponse("Field '$field' is required");
+        }
+    }
+
+    try {
+        $db = getDB();
+
+        // Generate unique slug
+        $slug = generateUniqueSlug($input['name'], $db);
+
+        // Prepare data
+        $data = [
+            'name' => cleanInput($input['name']),
+            'slug' => $slug,
+            'application' => cleanInput($input['application']),
+            'version' => cleanInput($input['version'] ?? '1.0.0'),
+            'short_description' => cleanInput($input['short_description']),
+            'full_description' => sanitizeHtml($input['full_description'] ?? ''),
+            'installation_instructions' => sanitizeHtml($input['installation_instructions'] ?? ''),
+            'usage_instructions' => sanitizeHtml($input['usage_instructions'] ?? ''),
+            'system_requirements' => cleanInput($input['system_requirements'] ?? ''),
+            'compatibility' => cleanInput($input['compatibility'] ?? ''),
+            'tags' => cleanInput($input['tags'] ?? ''),
+            'changelog' => sanitizeHtml($input['changelog'] ?? ''),
+            'price_type' => $input['price_type'] ?? 'free',
+            'price' => floatval($input['price'] ?? 0),
+            'status' => $input['status'] ?? 'draft',
+            'file_path' => $input['file_path'] ?? null,
+            'file_size' => $input['file_size'] ?? null
+        ];
+
+        $sql = "INSERT INTO scripts (name, slug, application, version, short_description, full_description,
+                installation_instructions, usage_instructions, system_requirements, compatibility, tags,
+                changelog, price_type, price, status, file_path, file_size)
+                VALUES (:name, :slug, :application, :version, :short_description, :full_description,
+                :installation_instructions, :usage_instructions, :system_requirements, :compatibility, :tags,
+                :changelog, :price_type, :price, :status, :file_path, :file_size)";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($data);
+
+        $scriptId = $db->lastInsertId();
+
+        // Add images if provided
+        if (!empty($input['images']) && is_array($input['images'])) {
+            $stmt = $db->prepare("INSERT INTO script_images (script_id, image_path, display_order) VALUES (?, ?, ?)");
+            foreach ($input['images'] as $order => $imagePath) {
+                $stmt->execute([$scriptId, $imagePath, $order]);
+            }
+        }
+
+        // Add videos if provided
+        if (!empty($input['videos']) && is_array($input['videos'])) {
+            $stmt = $db->prepare("INSERT INTO script_videos (script_id, video_url, title, display_order) VALUES (?, ?, ?, ?)");
+            foreach ($input['videos'] as $order => $video) {
+                $url = is_array($video) ? $video['url'] : $video;
+                $title = is_array($video) ? ($video['title'] ?? '') : '';
+                $stmt->execute([$scriptId, $url, $title, $order]);
+            }
+        }
+
+        successResponse([
+            'script_id' => $scriptId,
+            'slug' => $slug
+        ], 'Script created successfully');
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Update existing script
+ */
+function updateScript() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        errorResponse('Method not allowed', 405);
+    }
+
+    $id = intval($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) {
+        errorResponse('Script ID is required');
+    }
+
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    if (strpos($contentType, 'application/json') !== false) {
+        $input = json_decode(file_get_contents('php://input'), true);
+    } else {
+        $input = $_POST;
+    }
+
+    try {
+        $db = getDB();
+
+        // Check if script exists
+        $stmt = $db->prepare("SELECT id FROM scripts WHERE id = ?");
+        $stmt->execute([$id]);
+        if (!$stmt->fetch()) {
+            errorResponse('Script not found', 404);
+        }
+
+        // Build update query dynamically
+        $updates = [];
+        $params = [];
+
+        $fields = ['name', 'application', 'version', 'short_description', 'full_description',
+                   'installation_instructions', 'usage_instructions', 'system_requirements',
+                   'compatibility', 'tags', 'changelog', 'price_type', 'price', 'status',
+                   'file_path', 'file_size'];
+
+        foreach ($fields as $field) {
+            if (isset($input[$field])) {
+                $updates[] = "$field = ?";
+                if (in_array($field, ['full_description', 'installation_instructions', 'usage_instructions', 'changelog'])) {
+                    $params[] = sanitizeHtml($input[$field]);
+                } elseif ($field === 'price') {
+                    $params[] = floatval($input[$field]);
+                } else {
+                    $params[] = cleanInput($input[$field]);
+                }
+            }
+        }
+
+        // Update slug if name changed
+        if (isset($input['name'])) {
+            $newSlug = generateUniqueSlug($input['name'], $db, $id);
+            $updates[] = "slug = ?";
+            $params[] = $newSlug;
+        }
+
+        $updates[] = "updated_at = CURRENT_TIMESTAMP";
+
+        if (empty($updates)) {
+            errorResponse('No fields to update');
+        }
+
+        $sql = "UPDATE scripts SET " . implode(', ', $updates) . " WHERE id = ?";
+        $params[] = $id;
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+
+        // Update images if provided
+        if (isset($input['images'])) {
+            // Delete existing images
+            $db->prepare("DELETE FROM script_images WHERE script_id = ?")->execute([$id]);
+
+            // Add new images
+            if (!empty($input['images']) && is_array($input['images'])) {
+                $stmt = $db->prepare("INSERT INTO script_images (script_id, image_path, display_order) VALUES (?, ?, ?)");
+                foreach ($input['images'] as $order => $imagePath) {
+                    $stmt->execute([$id, $imagePath, $order]);
+                }
+            }
+        }
+
+        // Update videos if provided
+        if (isset($input['videos'])) {
+            $db->prepare("DELETE FROM script_videos WHERE script_id = ?")->execute([$id]);
+
+            if (!empty($input['videos']) && is_array($input['videos'])) {
+                $stmt = $db->prepare("INSERT INTO script_videos (script_id, video_url, title, display_order) VALUES (?, ?, ?, ?)");
+                foreach ($input['videos'] as $order => $video) {
+                    $url = is_array($video) ? $video['url'] : $video;
+                    $title = is_array($video) ? ($video['title'] ?? '') : '';
+                    $stmt->execute([$id, $url, $title, $order]);
+                }
+            }
+        }
+
+        successResponse([], 'Script updated successfully');
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Delete script
+ */
+function deleteScript() {
+    $id = intval($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) {
+        errorResponse('Script ID is required');
+    }
+
+    try {
+        $db = getDB();
+
+        // Get script info for file cleanup
+        $stmt = $db->prepare("SELECT file_path FROM scripts WHERE id = ?");
+        $stmt->execute([$id]);
+        $script = $stmt->fetch();
+
+        if (!$script) {
+            errorResponse('Script not found', 404);
+        }
+
+        // Get images for cleanup
+        $stmt = $db->prepare("SELECT image_path FROM script_images WHERE script_id = ?");
+        $stmt->execute([$id]);
+        $images = $stmt->fetchAll();
+
+        // Delete script (cascades to images and videos)
+        $stmt = $db->prepare("DELETE FROM scripts WHERE id = ?");
+        $stmt->execute([$id]);
+
+        // Clean up files
+        if ($script['file_path'] && file_exists(SCRIPTS_PATH . $script['file_path'])) {
+            unlink(SCRIPTS_PATH . $script['file_path']);
+        }
+        foreach ($images as $image) {
+            if (file_exists(IMAGES_PATH . $image['image_path'])) {
+                unlink(IMAGES_PATH . $image['image_path']);
+            }
+        }
+
+        successResponse([], 'Script deleted successfully');
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Toggle script status (draft/published)
+ */
+function toggleStatus() {
+    $id = intval($_GET['id'] ?? $_POST['id'] ?? 0);
+    if (!$id) {
+        errorResponse('Script ID is required');
+    }
+
+    try {
+        $db = getDB();
+
+        $stmt = $db->prepare("SELECT status FROM scripts WHERE id = ?");
+        $stmt->execute([$id]);
+        $script = $stmt->fetch();
+
+        if (!$script) {
+            errorResponse('Script not found', 404);
+        }
+
+        $newStatus = $script['status'] === 'published' ? 'draft' : 'published';
+
+        $stmt = $db->prepare("UPDATE scripts SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([$newStatus, $id]);
+
+        successResponse(['status' => $newStatus], "Script status changed to $newStatus");
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Get dashboard stats
+ */
+function getStats() {
+    try {
+        $db = getDB();
+
+        // Total scripts
+        $stmt = $db->query("SELECT COUNT(*) FROM scripts");
+        $total_scripts = $stmt->fetchColumn();
+
+        // Published scripts
+        $stmt = $db->query("SELECT COUNT(*) FROM scripts WHERE status = 'published'");
+        $published_scripts = $stmt->fetchColumn();
+
+        // Total downloads
+        $stmt = $db->query("SELECT COALESCE(SUM(downloads), 0) FROM scripts");
+        $total_downloads = $stmt->fetchColumn();
+
+        // Orders stats
+        $stmt = $db->query("SELECT COUNT(*) FROM orders");
+        $total_orders = $stmt->fetchColumn();
+
+        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM orders WHERE status = 'completed'");
+        $total_revenue = $stmt->fetchColumn();
+
+        // Recent scripts
+        $stmt = $db->query("SELECT id, name, application, price_type, price, status, created_at
+                           FROM scripts ORDER BY created_at DESC LIMIT 5");
+        $recent_scripts = $stmt->fetchAll();
+
+        // Recent orders
+        $stmt = $db->query("SELECT o.*, s.name as script_name
+                           FROM orders o
+                           LEFT JOIN scripts s ON o.script_id = s.id
+                           ORDER BY o.created_at DESC LIMIT 5");
+        $recent_orders = $stmt->fetchAll();
+
+        successResponse([
+            'success' => true,
+            'total_scripts' => (int)$total_scripts,
+            'published_scripts' => (int)$published_scripts,
+            'total_downloads' => (int)$total_downloads,
+            'total_orders' => (int)$total_orders,
+            'total_revenue' => (float)$total_revenue,
+            'recent_scripts' => $recent_scripts,
+            'recent_orders' => $recent_orders
+        ]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Get public scripts list
+ */
+function getPublicScripts() {
+    try {
+        $db = getDB();
+
+        $where = ["status = 'published'"];
+        $params = [];
+
+        // Filters
+        if (!empty($_GET['application'])) {
+            $where[] = "application = ?";
+            $params[] = $_GET['application'];
+        }
+        if (!empty($_GET['price_type'])) {
+            $where[] = "price_type = ?";
+            $params[] = $_GET['price_type'];
+        }
+
+        $whereClause = 'WHERE ' . implode(' AND ', $where);
+
+        // Sorting
+        $orderBy = 'ORDER BY created_at DESC';
+        if (!empty($_GET['sort'])) {
+            switch ($_GET['sort']) {
+                case 'popular':
+                    $orderBy = 'ORDER BY downloads DESC';
+                    break;
+                case 'price-low':
+                    $orderBy = 'ORDER BY price ASC';
+                    break;
+                case 'price-high':
+                    $orderBy = 'ORDER BY price DESC';
+                    break;
+                case 'name':
+                    $orderBy = 'ORDER BY name ASC';
+                    break;
+            }
+        }
+
+        $sql = "SELECT id, name, slug, application, version, short_description, price_type, price, downloads, created_at
+                FROM scripts $whereClause $orderBy";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $scripts = $stmt->fetchAll();
+
+        // Get first image for each script
+        foreach ($scripts as &$script) {
+            $stmt = $db->prepare("SELECT image_path FROM script_images WHERE script_id = ? ORDER BY display_order LIMIT 1");
+            $stmt->execute([$script['id']]);
+            $image = $stmt->fetch();
+            $script['thumbnail'] = $image ? $image['image_path'] : null;
+        }
+
+        successResponse(['scripts' => $scripts]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Get single public script by slug
+ */
+function getPublicScript() {
+    $slug = $_GET['slug'] ?? '';
+    if (empty($slug)) {
+        errorResponse('Script slug is required');
+    }
+
+    try {
+        $db = getDB();
+
+        $stmt = $db->prepare("SELECT * FROM scripts WHERE slug = ? AND status = 'published'");
+        $stmt->execute([$slug]);
+        $script = $stmt->fetch();
+
+        if (!$script) {
+            errorResponse('Script not found', 404);
+        }
+
+        // Get images
+        $stmt = $db->prepare("SELECT * FROM script_images WHERE script_id = ? ORDER BY display_order");
+        $stmt->execute([$script['id']]);
+        $script['images'] = $stmt->fetchAll();
+
+        // Get videos
+        $stmt = $db->prepare("SELECT * FROM script_videos WHERE script_id = ? ORDER BY display_order");
+        $stmt->execute([$script['id']]);
+        $script['videos'] = $stmt->fetchAll();
+
+        successResponse(['script' => $script]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Handle script download
+ */
+function downloadScript() {
+    $id = intval($_GET['id'] ?? 0);
+    if (!$id) {
+        errorResponse('Script ID is required');
+    }
+
+    try {
+        $db = getDB();
+
+        $stmt = $db->prepare("SELECT * FROM scripts WHERE id = ? AND status = 'published'");
+        $stmt->execute([$id]);
+        $script = $stmt->fetch();
+
+        if (!$script) {
+            errorResponse('Script not found', 404);
+        }
+
+        // Check if paid script (would need payment verification)
+        if ($script['price_type'] === 'paid' && $script['price'] > 0) {
+            // For now, just return info - payment integration later
+            errorResponse('This is a paid script. Payment required.', 402);
+        }
+
+        if (empty($script['file_path']) || !file_exists(SCRIPTS_PATH . $script['file_path'])) {
+            errorResponse('Script file not available', 404);
+        }
+
+        // Increment download count
+        $db->prepare("UPDATE scripts SET downloads = downloads + 1 WHERE id = ?")->execute([$id]);
+
+        // Return download info
+        successResponse([
+            'download_url' => 'api/upload.php?action=download&file=' . urlencode($script['file_path']),
+            'filename' => basename($script['file_path'])
+        ]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Script - Admin Panel</title>
 
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -352,7 +355,12 @@
     </nav>
 
     <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
     <script>
+        // Store uploaded file paths
+        let uploadedScriptFile = null;
+        let uploadedImages = [];
+
         // Character counter
         const shortDesc = document.getElementById('short-description');
         const charCount = document.getElementById('char-count');
@@ -396,10 +404,184 @@
             container.appendChild(newInput);
         }
 
+        // Handle script file upload
+        document.getElementById('script-file').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const preview = this.parentElement.querySelector('.upload-preview');
+            preview.innerHTML = '<div class="text-center text-gray-500"><i class="fas fa-spinner fa-spin"></i> Uploading...</div>';
+
+            try {
+                const result = await uploadFile(file, 'script');
+                if (result.success) {
+                    uploadedScriptFile = result;
+                    preview.innerHTML = `
+                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-code text-primary text-xl"></i>
+                                <div>
+                                    <div class="font-medium">${result.original_name}</div>
+                                    <div class="text-sm text-gray-500">${result.file_size}</div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeScriptFile()" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                    showToast('Script file uploaded');
+                } else {
+                    preview.innerHTML = '';
+                    showToast(result.error || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                preview.innerHTML = '';
+                showToast('Upload failed', 'error');
+            }
+        });
+
+        function removeScriptFile() {
+            uploadedScriptFile = null;
+            document.getElementById('script-file').value = '';
+            document.querySelector('#script-file').parentElement.querySelector('.upload-preview').innerHTML = '';
+        }
+
+        // Handle image uploads
+        document.getElementById('images').addEventListener('change', async function(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+
+            const preview = this.parentElement.querySelector('.upload-preview');
+            preview.innerHTML = '<div class="text-center text-gray-500"><i class="fas fa-spinner fa-spin"></i> Uploading...</div>';
+
+            try {
+                const result = await uploadImages(files);
+                if (result.success && result.uploaded.length > 0) {
+                    uploadedImages = [...uploadedImages, ...result.uploaded];
+                    renderImagePreviews(preview);
+                    showToast(`${result.count} image(s) uploaded`);
+                } else {
+                    showToast(result.errors?.join(', ') || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                showToast('Upload failed', 'error');
+            }
+        });
+
+        function renderImagePreviews(container) {
+            container.innerHTML = uploadedImages.map((img, index) => `
+                <div class="relative inline-block m-1">
+                    <img src="../${img.url}" alt="" class="w-24 h-24 object-cover rounded-lg">
+                    <button type="button" onclick="removeImage(${index})"
+                            class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs hover:bg-red-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            const preview = document.getElementById('images').parentElement.querySelector('.upload-preview');
+            renderImagePreviews(preview);
+        }
+
         // Form submission
-        document.getElementById('upload-form').addEventListener('submit', function(e) {
+        document.getElementById('upload-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            alert('Script would be published! (Demo mode - no backend)');
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+
+            // Collect form data
+            const data = {
+                name: document.getElementById('script-name').value,
+                application: document.getElementById('application').value,
+                version: document.getElementById('version').value || '1.0.0',
+                price_type: document.querySelector('input[name="price_type"]:checked').value,
+                price: document.getElementById('price').value || 0,
+                short_description: document.getElementById('short-description').value,
+                full_description: document.getElementById('full-description').innerHTML,
+                installation_instructions: document.getElementById('installation-instructions').innerHTML,
+                usage_instructions: document.getElementById('usage-instructions').innerHTML,
+                system_requirements: document.getElementById('system-requirements').value,
+                compatibility: document.getElementById('compatibility').value,
+                tags: document.getElementById('tags').value,
+                changelog: document.getElementById('changelog').value,
+                status: 'published',
+                file_path: uploadedScriptFile?.file_path || null,
+                file_size: uploadedScriptFile?.file_size || null,
+                images: uploadedImages.map(img => img.image_path),
+                videos: Array.from(document.querySelectorAll('input[name="video_url[]"]'))
+                    .map(input => input.value)
+                    .filter(url => url.trim() !== '')
+            };
+
+            try {
+                const result = await createScript(data);
+                if (result.success) {
+                    showToast('Script published successfully!');
+                    setTimeout(() => {
+                        window.location.href = 'scripts.html';
+                    }, 1500);
+                } else {
+                    showToast(result.error || 'Failed to publish script', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Publish Script';
+                }
+            } catch (error) {
+                showToast('Failed to publish script', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Publish Script';
+            }
+        });
+
+        // Save as draft
+        document.querySelector('button:has(.fa-save)').addEventListener('click', async function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+
+            const data = {
+                name: document.getElementById('script-name').value || 'Untitled Script',
+                application: document.getElementById('application').value || 'indesign',
+                version: document.getElementById('version').value || '1.0.0',
+                price_type: document.querySelector('input[name="price_type"]:checked')?.value || 'free',
+                price: document.getElementById('price').value || 0,
+                short_description: document.getElementById('short-description').value || 'Draft script',
+                full_description: document.getElementById('full-description').innerHTML,
+                installation_instructions: document.getElementById('installation-instructions').innerHTML,
+                usage_instructions: document.getElementById('usage-instructions').innerHTML,
+                system_requirements: document.getElementById('system-requirements').value,
+                compatibility: document.getElementById('compatibility').value,
+                tags: document.getElementById('tags').value,
+                changelog: document.getElementById('changelog').value,
+                status: 'draft',
+                file_path: uploadedScriptFile?.file_path || null,
+                file_size: uploadedScriptFile?.file_size || null,
+                images: uploadedImages.map(img => img.image_path),
+                videos: Array.from(document.querySelectorAll('input[name="video_url[]"]'))
+                    .map(input => input.value)
+                    .filter(url => url.trim() !== '')
+            };
+
+            try {
+                const result = await createScript(data);
+                if (result.success) {
+                    showToast('Draft saved successfully!');
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-save mr-2"></i>Save as Draft';
+                } else {
+                    showToast(result.error || 'Failed to save draft', 'error');
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-save mr-2"></i>Save as Draft';
+                }
+            } catch (error) {
+                showToast('Failed to save draft', 'error');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-save mr-2"></i>Save as Draft';
+            }
         });
     </script>
 </body>

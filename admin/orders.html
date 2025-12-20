@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders - Admin Panel</title>
 
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -99,7 +102,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Orders</p>
-                            <p class="text-2xl font-bold text-gray-900">248</p>
+                            <p id="stat-total-orders" class="text-2xl font-bold text-gray-900">0</p>
                         </div>
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-shopping-cart text-blue-600"></i>
@@ -111,7 +114,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Revenue</p>
-                            <p class="text-2xl font-bold text-gray-900">$4,856</p>
+                            <p id="stat-total-revenue" class="text-2xl font-bold text-gray-900">$0.00</p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-dollar-sign text-green-600"></i>
@@ -123,7 +126,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">This Month</p>
-                            <p class="text-2xl font-bold text-gray-900">$892</p>
+                            <p id="stat-month-revenue" class="text-2xl font-bold text-gray-900">$0.00</p>
                         </div>
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-calendar-alt text-purple-600"></i>
@@ -135,7 +138,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Avg Order Value</p>
-                            <p class="text-2xl font-bold text-gray-900">$19.58</p>
+                            <p id="stat-avg-order" class="text-2xl font-bold text-gray-900">$0.00</p>
                         </div>
                         <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-chart-line text-yellow-600"></i>
@@ -150,23 +153,23 @@
                     <div class="flex-1 min-w-[200px]">
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="Search by email or order ID..."
+                            <input type="text" id="search-input" placeholder="Search by email or order ID..."
                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                     </div>
-                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select id="filter-status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="">All Status</option>
                         <option value="completed">Completed</option>
                         <option value="pending">Pending</option>
                         <option value="failed">Failed</option>
                         <option value="refunded">Refunded</option>
                     </select>
-                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select id="filter-payment" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="">All Payment Methods</option>
                         <option value="stripe">Stripe</option>
                         <option value="paypal">PayPal</option>
                     </select>
-                    <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <input type="date" id="filter-date" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                 </div>
             </div>
 
@@ -186,184 +189,10 @@
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001248</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Smart Layer Renamer</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">john@example.com</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$19.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
-                                        Stripe
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 20, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001248')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001247</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Data Merge Pro</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">sarah@design.co</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$29.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-paypal text-blue-600 mr-1"></i>
-                                        PayPal
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 19, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001247')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001246</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Book Builder Pro</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">mike@agency.com</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$39.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
-                                        Stripe
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 18, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001246')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001245</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Color Palette Generator</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">alex@studio.io</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$14.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-paypal text-blue-600 mr-1"></i>
-                                        PayPal
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pending
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 17, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001245')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001244</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Action Batch Runner</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">emma@creative.net</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$24.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
-                                        Stripe
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Completed
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 16, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001244')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <span class="font-mono text-sm text-gray-900">#ORD-001243</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">Path Cleaner</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-gray-900">lisa@graphics.com</div>
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">$19.99</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center">
-                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
-                                        Stripe
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Refunded
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 15, 2024</td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewOrder('ORD-001243')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                        <tbody id="orders-table-body" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading orders...
                                 </td>
                             </tr>
                         </tbody>
@@ -372,20 +201,8 @@
 
                 <!-- Pagination -->
                 <div class="px-6 py-4 border-t flex items-center justify-between">
-                    <p class="text-sm text-gray-600">Showing 1 to 6 of 248 orders</p>
-                    <div class="flex gap-2">
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-500 hover:bg-gray-50" disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="px-3 py-1 bg-primary text-white rounded">1</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">2</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">3</button>
-                        <span class="px-3 py-1 text-gray-500">...</span>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">42</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                    <p id="pagination-info" class="text-sm text-gray-600">Showing 0 orders</p>
+                    <div id="pagination-controls" class="flex gap-2"></div>
                 </div>
             </div>
         </main>
@@ -404,44 +221,39 @@
                 <div class="space-y-4">
                     <div class="flex justify-between">
                         <span class="text-gray-500">Order ID</span>
-                        <span class="font-mono font-medium">#ORD-001248</span>
+                        <span data-field="order-id" class="font-mono font-medium">#ORD-000000</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Script</span>
-                        <span class="font-medium">Smart Layer Renamer</span>
+                        <span data-field="script" class="font-medium">Loading...</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Customer Email</span>
-                        <span class="font-medium">john@example.com</span>
+                        <span data-field="email" class="font-medium">Loading...</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Amount</span>
-                        <span class="font-bold text-lg">$19.99</span>
+                        <span data-field="amount" class="font-bold text-lg">$0.00</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Payment Method</span>
-                        <span class="font-medium">
-                            <i class="fab fa-stripe text-purple-600 mr-1"></i>
-                            Stripe
-                        </span>
+                        <span data-field="payment" class="font-medium">Loading...</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Payment ID</span>
-                        <span class="font-mono text-sm">pi_3MqJw...</span>
+                        <span data-field="payment-id" class="font-mono text-sm">N/A</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Status</span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Completed
-                        </span>
+                        <span data-field="status">Loading...</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Date</span>
-                        <span class="font-medium">Dec 20, 2024 at 2:34 PM</span>
+                        <span data-field="date" class="font-medium">Loading...</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Downloads</span>
-                        <span class="font-medium">1 of 3</span>
+                        <span data-field="downloads" class="font-medium">0 of 3</span>
                     </div>
                 </div>
 
@@ -486,31 +298,209 @@
         </a>
     </nav>
 
+    <script src="../js/admin.js"></script>
     <script>
-        function viewOrder(orderId) {
-            document.getElementById('order-modal').classList.remove('hidden');
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchTimeout = null;
+        let currentOrder = null;
+
+        async function loadStats() {
+            try {
+                const result = await fetchOrderStats();
+                if (result.success) {
+                    document.getElementById('stat-total-orders').textContent = result.total_orders;
+                    document.getElementById('stat-total-revenue').textContent = '$' + result.total_revenue.toFixed(2);
+                    document.getElementById('stat-month-revenue').textContent = '$' + result.month_revenue.toFixed(2);
+                    document.getElementById('stat-avg-order').textContent = '$' + result.avg_order.toFixed(2);
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadOrders() {
+            const params = {
+                page: currentPage,
+                limit: 10,
+                search: document.getElementById('search-input').value,
+                status: document.getElementById('filter-status').value,
+                payment_method: document.getElementById('filter-payment').value,
+                date_from: document.getElementById('filter-date').value
+            };
+
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</td></tr>';
+
+            try {
+                const result = await fetchOrders(params);
+                if (result.success) {
+                    totalPages = result.total_pages || 1;
+                    renderOrders(result.orders || []);
+                    renderPagination(result.total || 0, result.page || 1, result.limit || 10);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-red-500">Failed to load orders</td></tr>';
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-500">No orders yet.</td></tr>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('orders-table-body');
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-gray-500">No orders found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(order => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <span class="font-mono text-sm text-gray-900">#${escapeHtml(order.order_id)}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-gray-900">${escapeHtml(order.script_name || 'Unknown')}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="text-gray-900">${escapeHtml(order.customer_email)}</div>
+                    </td>
+                    <td class="px-6 py-4 font-medium text-gray-900">$${parseFloat(order.amount).toFixed(2)}</td>
+                    <td class="px-6 py-4">${getPaymentBadge(order.payment_method)}</td>
+                    <td class="px-6 py-4">${getOrderStatusBadge(order.status)}</td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">${formatDate(order.created_at)}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="viewOrder(${order.id})" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getPaymentBadge(method) {
+            if (method === 'stripe') {
+                return '<span class="inline-flex items-center"><i class="fab fa-stripe text-purple-600 mr-1"></i>Stripe</span>';
+            } else if (method === 'paypal') {
+                return '<span class="inline-flex items-center"><i class="fab fa-paypal text-blue-600 mr-1"></i>PayPal</span>';
+            }
+            return '<span class="text-gray-500">' + (method || 'N/A') + '</span>';
+        }
+
+        function getOrderStatusBadge(status) {
+            const badges = {
+                completed: 'bg-green-100 text-green-800',
+                pending: 'bg-yellow-100 text-yellow-800',
+                failed: 'bg-red-100 text-red-800',
+                refunded: 'bg-gray-100 text-gray-800'
+            };
+            const badgeClass = badges[status] || 'bg-gray-100 text-gray-800';
+            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}">${capitalize(status)}</span>`;
+        }
+
+        function renderPagination(total, page, limit) {
+            const start = total === 0 ? 0 : (page - 1) * limit + 1;
+            const end = Math.min(page * limit, total);
+            document.getElementById('pagination-info').textContent = `Showing ${start} to ${end} of ${total} orders`;
+
+            const controls = document.getElementById('pagination-controls');
+            if (totalPages <= 1) {
+                controls.innerHTML = '';
+                return;
+            }
+
+            let html = `<button onclick="goToPage(${page - 1})" class="px-3 py-1 border border-gray-300 rounded text-gray-500 hover:bg-gray-50" ${page === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            for (let i = 1; i <= totalPages && i <= 5; i++) {
+                html += `<button onclick="goToPage(${i})" class="px-3 py-1 ${i === page ? 'bg-primary text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'} rounded">${i}</button>`;
+            }
+
+            html += `<button onclick="goToPage(${page + 1})" class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50" ${page === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            controls.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            loadOrders();
+        }
+
+        async function viewOrder(id) {
+            try {
+                const result = await fetchOrder(id);
+                if (result.success && result.order) {
+                    currentOrder = result.order;
+                    updateModalContent(result.order);
+                    document.getElementById('order-modal').classList.remove('hidden');
+                }
+            } catch (error) {
+                showToast('Failed to load order details', 'error');
+            }
+        }
+
+        function updateModalContent(order) {
+            const modal = document.getElementById('order-modal');
+            modal.querySelector('[data-field="order-id"]').textContent = '#' + order.order_id;
+            modal.querySelector('[data-field="script"]').textContent = order.script_name || 'Unknown';
+            modal.querySelector('[data-field="email"]').textContent = order.customer_email;
+            modal.querySelector('[data-field="amount"]').textContent = '$' + parseFloat(order.amount).toFixed(2);
+            modal.querySelector('[data-field="payment"]').innerHTML = getPaymentBadge(order.payment_method);
+            modal.querySelector('[data-field="payment-id"]').textContent = order.payment_id || 'N/A';
+            modal.querySelector('[data-field="status"]').innerHTML = getOrderStatusBadge(order.status);
+            modal.querySelector('[data-field="date"]').textContent = formatDate(order.created_at);
+            modal.querySelector('[data-field="downloads"]').textContent = (order.downloads_used || 0) + ' of ' + (order.max_downloads || 3);
         }
 
         function closeModal() {
             document.getElementById('order-modal').classList.add('hidden');
+            currentOrder = null;
         }
 
         function exportOrders() {
-            alert('Orders exported to CSV! (Demo mode - no backend)');
+            const params = new URLSearchParams({
+                action: 'export',
+                status: document.getElementById('filter-status').value,
+                date_from: document.getElementById('filter-date').value
+            });
+            window.location.href = '../api/orders.php?' + params.toString();
         }
 
-        // Close modal on outside click
-        document.getElementById('order-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function capitalize(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+
+        // Event listeners
+        document.getElementById('search-input').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { currentPage = 1; loadOrders(); }, 300);
         });
 
-        // Close modal on Escape key
+        document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; loadOrders(); });
+        document.getElementById('filter-payment').addEventListener('change', () => { currentPage = 1; loadOrders(); });
+        document.getElementById('filter-date').addEventListener('change', () => { currentPage = 1; loadOrders(); });
+
+        document.getElementById('order-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadOrders();
         });
     </script>
 </body>

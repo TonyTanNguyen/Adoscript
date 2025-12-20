@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Scripts - Admin Panel</title>
 
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -99,22 +102,22 @@
                     <div class="flex-1 min-w-[200px]">
                         <div class="relative">
                             <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="Search scripts..."
+                            <input type="text" id="search-input" placeholder="Search scripts..."
                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         </div>
                     </div>
-                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select id="filter-app" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="">All Applications</option>
                         <option value="indesign">InDesign</option>
                         <option value="photoshop">Photoshop</option>
                         <option value="illustrator">Illustrator</option>
                     </select>
-                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select id="filter-price" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="">All Prices</option>
                         <option value="free">Free</option>
                         <option value="paid">Paid</option>
                     </select>
-                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select id="filter-status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                         <option value="">All Status</option>
                         <option value="published">Published</option>
                         <option value="draft">Draft</option>
@@ -136,199 +139,10 @@
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-file-alt text-indesign"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">Batch Export Pages</div>
-                                            <div class="text-sm text-gray-500">v2.1.0</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
-                                        InDesign
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-green-600 font-medium">FREE</td>
-                                <td class="px-6 py-4 text-gray-600">2,450</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Published
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="upload.html" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="../script-detail.html" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button onclick="confirmDelete('Batch Export Pages')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-layer-group text-photoshop"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">Smart Layer Renamer</div>
-                                            <div class="text-sm text-gray-500">v1.5.0</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
-                                        Photoshop
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-primary font-medium">$19.99</td>
-                                <td class="px-6 py-4 text-gray-600">1,230</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Published
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="upload.html" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="../script-detail.html" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button onclick="confirmDelete('Smart Layer Renamer')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-illustrator/10 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-expand-arrows-alt text-illustrator"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">Artboard Resizer Pro</div>
-                                            <div class="text-sm text-gray-500">v1.2.0</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
-                                        Illustrator
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-green-600 font-medium">FREE</td>
-                                <td class="px-6 py-4 text-gray-600">890</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Published
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="upload.html" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="../script-detail.html" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button onclick="confirmDelete('Artboard Resizer Pro')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-database text-indesign"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">Data Merge Pro</div>
-                                            <div class="text-sm text-gray-500">v3.0.0</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
-                                        InDesign
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-primary font-medium">$29.99</td>
-                                <td class="px-6 py-4 text-gray-600">756</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Published
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="upload.html" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="../script-detail.html" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button onclick="confirmDelete('Data Merge Pro')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-compress-arrows-alt text-photoshop"></i>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium text-gray-900">Batch Resize Images</div>
-                                            <div class="text-sm text-gray-500">v2.0.0</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
-                                        Photoshop
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-green-600 font-medium">FREE</td>
-                                <td class="px-6 py-4 text-gray-600">3,420</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Draft
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="upload.html" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="../script-detail.html" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <button onclick="confirmDelete('Batch Resize Images')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                        <tbody id="scripts-table-body" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Loading scripts...
                                 </td>
                             </tr>
                         </tbody>
@@ -337,18 +151,8 @@
 
                 <!-- Pagination -->
                 <div class="px-6 py-4 border-t flex items-center justify-between">
-                    <p class="text-sm text-gray-600">Showing 1 to 5 of 55 scripts</p>
-                    <div class="flex gap-2">
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-500 hover:bg-gray-50" disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="px-3 py-1 bg-primary text-white rounded">1</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">2</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">3</button>
-                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                    <p id="pagination-info" class="text-sm text-gray-600">Showing 0 scripts</p>
+                    <div id="pagination-controls" class="flex gap-2"></div>
                 </div>
             </div>
         </main>
@@ -374,12 +178,162 @@
         </a>
     </nav>
 
+    <script src="../js/admin.js"></script>
     <script>
-        function confirmDelete(scriptName) {
-            if (confirm(`Are you sure you want to delete "${scriptName}"? This action cannot be undone.`)) {
-                alert('Script deleted! (Demo mode - no backend)');
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchTimeout = null;
+
+        async function loadScripts() {
+            const params = {
+                page: currentPage,
+                limit: 10,
+                search: document.getElementById('search-input').value,
+                application: document.getElementById('filter-app').value,
+                price_type: document.getElementById('filter-price').value,
+                status: document.getElementById('filter-status').value
+            };
+
+            const tbody = document.getElementById('scripts-table-body');
+            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</td></tr>';
+
+            try {
+                const result = await fetchScripts(params);
+                if (result.success) {
+                    totalPages = result.total_pages || 1;
+                    renderScripts(result.scripts || []);
+                    renderPagination(result.total || 0, result.page || 1, result.limit || 10);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Failed to load scripts</td></tr>';
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Error loading scripts</td></tr>';
             }
         }
+
+        function renderScripts(scripts) {
+            const tbody = document.getElementById('scripts-table-body');
+            if (scripts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No scripts found. <a href="upload.html" class="text-primary hover:underline">Upload your first script</a></td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = scripts.map(script => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 ${getAppBgClass(script.application)} rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas ${getAppIcon(script.application)} ${getAppTextClass(script.application)}"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">${escapeHtml(script.name)}</div>
+                                <div class="text-sm text-gray-500">v${script.version || '1.0.0'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">${getAppBadge(script.application)}</td>
+                    <td class="px-6 py-4">${formatPrice(script.price, script.price_type)}</td>
+                    <td class="px-6 py-4 text-gray-600">${formatNumber(script.downloads || 0)}</td>
+                    <td class="px-6 py-4">${getStatusBadge(script.status)}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <a href="upload.html?id=${script.id}" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="../script-detail.html?slug=${script.slug}" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button onclick="confirmDelete(${script.id}, '${escapeHtml(script.name).replace(/'/g, "\\'")}')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination(total, page, limit) {
+            const start = total === 0 ? 0 : (page - 1) * limit + 1;
+            const end = Math.min(page * limit, total);
+            document.getElementById('pagination-info').textContent = `Showing ${start} to ${end} of ${total} scripts`;
+
+            const controls = document.getElementById('pagination-controls');
+            if (totalPages <= 1) {
+                controls.innerHTML = '';
+                return;
+            }
+
+            let html = `<button onclick="goToPage(${page - 1})" class="px-3 py-1 border border-gray-300 rounded text-gray-500 hover:bg-gray-50" ${page === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+            </button>`;
+
+            for (let i = 1; i <= totalPages && i <= 5; i++) {
+                html += `<button onclick="goToPage(${i})" class="px-3 py-1 ${i === page ? 'bg-primary text-white' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'} rounded">${i}</button>`;
+            }
+
+            html += `<button onclick="goToPage(${page + 1})" class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50" ${page === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+            controls.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            loadScripts();
+        }
+
+        async function confirmDelete(id, name) {
+            if (confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+                try {
+                    const result = await deleteScript(id);
+                    if (result.success) {
+                        showToast('Script deleted successfully');
+                        loadScripts();
+                    } else {
+                        showToast(result.error || 'Failed to delete script', 'error');
+                    }
+                } catch (error) {
+                    showToast('Failed to delete script', 'error');
+                }
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        function getAppBgClass(app) {
+            return { indesign: 'bg-indesign/10', photoshop: 'bg-photoshop/10', illustrator: 'bg-illustrator/10' }[app] || 'bg-gray-100';
+        }
+
+        function getAppTextClass(app) {
+            return { indesign: 'text-indesign', photoshop: 'text-photoshop', illustrator: 'text-illustrator' }[app] || 'text-gray-600';
+        }
+
+        function getAppIcon(app) {
+            return { indesign: 'fa-file-alt', photoshop: 'fa-image', illustrator: 'fa-pen-nib' }[app] || 'fa-file-code';
+        }
+
+        // Event listeners for filters
+        document.getElementById('search-input').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { currentPage = 1; loadScripts(); }, 300);
+        });
+
+        document.getElementById('filter-app').addEventListener('change', () => { currentPage = 1; loadScripts(); });
+        document.getElementById('filter-price').addEventListener('change', () => { currentPage = 1; loadScripts(); });
+        document.getElementById('filter-status').addEventListener('change', () => { currentPage = 1; loadScripts(); });
+
+        // Load scripts on page load
+        document.addEventListener('DOMContentLoaded', loadScripts);
     </script>
 </body>
 </html>

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Admin Panel</title>
 
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -96,7 +99,7 @@
                         </div>
                         <span class="text-green-500 text-sm font-medium">+2 new</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-900 mb-1">55</div>
+                    <div id="total-scripts" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Scripts</div>
                 </div>
 
@@ -107,7 +110,7 @@
                         </div>
                         <span class="text-green-500 text-sm font-medium">+12%</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-900 mb-1">12,450</div>
+                    <div id="total-downloads" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Downloads</div>
                 </div>
 
@@ -118,7 +121,7 @@
                         </div>
                         <span class="text-green-500 text-sm font-medium">+5 this week</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-900 mb-1">248</div>
+                    <div id="total-orders" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Orders</div>
                 </div>
 
@@ -129,7 +132,7 @@
                         </div>
                         <span class="text-green-500 text-sm font-medium">+8%</span>
                     </div>
-                    <div class="text-2xl font-bold text-gray-900 mb-1">$4,856</div>
+                    <div id="total-revenue" class="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
                     <div class="text-gray-600 text-sm">Total Revenue</div>
                 </div>
             </div>
@@ -141,71 +144,8 @@
                         <h2 class="text-lg font-semibold text-gray-900">Recent Scripts</h2>
                         <a href="scripts.html" class="text-primary text-sm hover:underline">View All</a>
                     </div>
-                    <div class="divide-y">
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-indesign"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Batch Export Pages</div>
-                                    <div class="text-sm text-gray-500">InDesign</div>
-                                </div>
-                            </div>
-                            <span class="text-green-600 font-medium">FREE</span>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-image text-photoshop"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Smart Layer Renamer</div>
-                                    <div class="text-sm text-gray-500">Photoshop</div>
-                                </div>
-                            </div>
-                            <span class="text-primary font-medium">$19.99</span>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-illustrator/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-pen-nib text-illustrator"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Artboard Resizer Pro</div>
-                                    <div class="text-sm text-gray-500">Illustrator</div>
-                                </div>
-                            </div>
-                            <span class="text-green-600 font-medium">FREE</span>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-database text-indesign"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Data Merge Pro</div>
-                                    <div class="text-sm text-gray-500">InDesign</div>
-                                </div>
-                            </div>
-                            <span class="text-primary font-medium">$29.99</span>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-compress-arrows-alt text-photoshop"></i>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900">Batch Resize Images</div>
-                                    <div class="text-sm text-gray-500">Photoshop</div>
-                                </div>
-                            </div>
-                            <span class="text-green-600 font-medium">FREE</span>
-                        </div>
+                    <div id="recent-scripts" class="divide-y">
+                        <div class="p-6 text-center text-gray-500">Loading...</div>
                     </div>
                 </div>
 
@@ -215,61 +155,8 @@
                         <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
                         <a href="orders.html" class="text-primary text-sm hover:underline">View All</a>
                     </div>
-                    <div class="divide-y">
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div>
-                                <div class="font-medium text-gray-900">Smart Layer Renamer</div>
-                                <div class="text-sm text-gray-500">john@example.com</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-medium text-gray-900">$19.99</div>
-                                <div class="text-xs text-green-600">Completed</div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div>
-                                <div class="font-medium text-gray-900">Data Merge Pro</div>
-                                <div class="text-sm text-gray-500">sarah@design.co</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-medium text-gray-900">$29.99</div>
-                                <div class="text-xs text-green-600">Completed</div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div>
-                                <div class="font-medium text-gray-900">Book Builder Pro</div>
-                                <div class="text-sm text-gray-500">mike@agency.com</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-medium text-gray-900">$39.99</div>
-                                <div class="text-xs text-green-600">Completed</div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div>
-                                <div class="font-medium text-gray-900">Color Palette Generator</div>
-                                <div class="text-sm text-gray-500">alex@studio.io</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-medium text-gray-900">$14.99</div>
-                                <div class="text-xs text-green-600">Completed</div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
-                            <div>
-                                <div class="font-medium text-gray-900">Action Batch Runner</div>
-                                <div class="text-sm text-gray-500">emma@creative.net</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-medium text-gray-900">$24.99</div>
-                                <div class="text-xs text-green-600">Completed</div>
-                            </div>
-                        </div>
+                    <div id="recent-orders" class="divide-y">
+                        <div class="p-6 text-center text-gray-500">Loading...</div>
                     </div>
                 </div>
             </div>
@@ -318,5 +205,90 @@
             <span class="text-xs mt-1">Orders</span>
         </a>
     </nav>
+
+    <script src="../js/admin.js"></script>
+    <script>
+        async function loadDashboard() {
+            try {
+                const stats = await fetchStats();
+                if (stats.success) {
+                    document.getElementById('total-scripts').textContent = stats.total_scripts || 0;
+                    document.getElementById('total-downloads').textContent = formatNumber(stats.total_downloads || 0);
+                    document.getElementById('total-orders').textContent = stats.total_orders || 0;
+                    document.getElementById('total-revenue').textContent = '$' + (stats.total_revenue || 0).toFixed(2);
+
+                    const scriptsContainer = document.getElementById('recent-scripts');
+                    if (stats.recent_scripts && stats.recent_scripts.length > 0) {
+                        scriptsContainer.innerHTML = stats.recent_scripts.map(script => `
+                            <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 ${getAppBgClass(script.application)} rounded-lg flex items-center justify-center">
+                                        <i class="fas ${getAppIcon(script.application)} ${getAppTextClass(script.application)}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">${escapeHtml(script.name)}</div>
+                                        <div class="text-sm text-gray-500">${getAppName(script.application)}</div>
+                                    </div>
+                                </div>
+                                ${formatPrice(script.price, script.price_type)}
+                            </div>
+                        `).join('');
+                    } else {
+                        scriptsContainer.innerHTML = '<div class="p-6 text-center text-gray-500">No scripts yet. <a href="upload.html" class="text-primary hover:underline">Upload your first script</a></div>';
+                    }
+
+                    const ordersContainer = document.getElementById('recent-orders');
+                    if (stats.recent_orders && stats.recent_orders.length > 0) {
+                        ordersContainer.innerHTML = stats.recent_orders.map(order => `
+                            <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                                <div>
+                                    <div class="font-medium text-gray-900">${escapeHtml(order.script_name)}</div>
+                                    <div class="text-sm text-gray-500">${escapeHtml(order.customer_email)}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-medium text-gray-900">$${parseFloat(order.amount).toFixed(2)}</div>
+                                    <div class="text-xs ${order.status === 'completed' ? 'text-green-600' : 'text-yellow-600'}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</div>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        ordersContainer.innerHTML = '<div class="p-6 text-center text-gray-500">No orders yet.</div>';
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getAppBgClass(app) {
+            return { indesign: 'bg-indesign/10', photoshop: 'bg-photoshop/10', illustrator: 'bg-illustrator/10' }[app] || 'bg-gray-100';
+        }
+
+        function getAppTextClass(app) {
+            return { indesign: 'text-indesign', photoshop: 'text-photoshop', illustrator: 'text-illustrator' }[app] || 'text-gray-600';
+        }
+
+        function getAppIcon(app) {
+            return { indesign: 'fa-file-alt', photoshop: 'fa-image', illustrator: 'fa-pen-nib' }[app] || 'fa-file-code';
+        }
+
+        function getAppName(app) {
+            return { indesign: 'InDesign', photoshop: 'Photoshop', illustrator: 'Illustrator' }[app] || app;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
 </body>
 </html>

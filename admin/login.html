@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Adoscript</title>
 
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -82,11 +85,19 @@
                 </button>
             </form>
 
-            <!-- Demo credentials notice -->
+            <!-- Error message -->
+            <div id="error-message" class="mt-6 p-4 bg-red-50 rounded-lg hidden">
+                <p class="text-sm text-red-800">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="error-text"></span>
+                </p>
+            </div>
+
+            <!-- Default credentials notice -->
             <div class="mt-6 p-4 bg-blue-50 rounded-lg">
                 <p class="text-sm text-blue-800">
                     <i class="fas fa-info-circle mr-2"></i>
-                    <strong>Demo:</strong> Use any email/password to access the admin panel.
+                    <strong>Default:</strong> admin@adoscript.com / admin123
                 </p>
             </div>
         </div>
@@ -101,6 +112,16 @@
     </div>
 
     <script>
+        // Check if already logged in
+        fetch('../api/auth.php?action=check')
+            .then(res => res.json())
+            .then(data => {
+                if (data.authenticated) {
+                    window.location.href = 'dashboard.html';
+                }
+            })
+            .catch(() => {});
+
         function togglePassword() {
             const password = document.getElementById('password');
             const icon = document.getElementById('password-icon');
@@ -116,10 +137,52 @@
             }
         }
 
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error-message').classList.add('hidden');
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            // For demo purposes, redirect to dashboard
-            window.location.href = 'dashboard.html';
+            hideError();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = this.querySelector('button[type="submit"]');
+
+            // Disable button during request
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Signing in...';
+
+            try {
+                const response = await fetch('../api/auth.php?action=login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.redirect || 'dashboard.html';
+                } else {
+                    showError(data.error || 'Login failed');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Sign In';
+                }
+            } catch (error) {
+                showError('Connection error. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Sign In';
+            }
         });
     </script>
 </body>
