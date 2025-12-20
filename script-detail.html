@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Export Pages - Adobe Scripts Marketplace</title>
+    <meta name="description" content="Export multiple InDesign pages to individual PDF files with custom naming conventions and settings.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'adobe-red': '#FF0000',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                        <i class="fas fa-code text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">ScriptStore</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="scripts.html" class="text-primary font-medium">Scripts</a>
+                    <a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bars text-gray-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-600">Home</a>
+                <a href="scripts.html" class="block py-2 text-primary font-medium">Scripts</a>
+                <a href="about.html" class="block py-2 text-gray-600">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex text-sm text-gray-500">
+                <a href="index.html" class="hover:text-primary">Home</a>
+                <span class="mx-2">/</span>
+                <a href="scripts.html" class="hover:text-primary">Scripts</a>
+                <span class="mx-2">/</span>
+                <a href="scripts.html?app=indesign" class="hover:text-primary">InDesign</a>
+                <span class="mx-2">/</span>
+                <span class="text-gray-900">Batch Export Pages</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lg:flex lg:gap-8">
+            <!-- Left Column - Main Content -->
+            <div class="lg:flex-1">
+                <!-- Script Header -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indesign/10 text-indesign">
+                                    <i class="fas fa-file-alt mr-2"></i> InDesign
+                                </span>
+                                <span class="text-sm text-gray-500">Version 2.1.0</span>
+                            </div>
+                            <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Batch Export Pages</h1>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <span class="text-gray-600">4.8 (124 reviews)</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-lg">
+                        Export multiple InDesign pages to individual PDF files with custom naming conventions, compression settings, and preset configurations. Perfect for automating repetitive export tasks.
+                    </p>
+                </div>
+
+                <!-- Preview Image -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                    <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                        <i class="fas fa-file-alt text-indesign text-8xl opacity-30"></i>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="border-b flex overflow-x-auto">
+                        <button class="tab-button active" data-tab="tab-description">Description</button>
+                        <button class="tab-button" data-tab="tab-installation">Installation</button>
+                        <button class="tab-button" data-tab="tab-usage">Usage Guide</button>
+                        <button class="tab-button" data-tab="tab-images">Screenshots</button>
+                        <button class="tab-button" data-tab="tab-videos">Videos</button>
+                        <button class="tab-button" data-tab="tab-changelog">Changelog</button>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div class="p-6">
+                        <!-- Description Tab -->
+                        <div id="tab-description" class="tab-content active">
+                            <div class="prose max-w-none">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-4">About This Script</h3>
+                                <p class="text-gray-600 mb-4">
+                                    Batch Export Pages is a powerful InDesign script that automates the process of exporting multiple pages to individual PDF files. Whether you're working on a catalog with hundreds of pages or need to distribute individual sheets to different clients, this script saves you hours of manual work.
+                                </p>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3 mt-6">Key Features</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
+                                    <li>Export all pages or a custom page range to individual PDFs</li>
+                                    <li>Customizable file naming with variables (page number, document name, date)</li>
+                                    <li>Support for all InDesign PDF presets</li>
+                                    <li>Option to include bleed and slug areas</li>
+                                    <li>Automatic folder creation for organized output</li>
+                                    <li>Progress bar with estimated time remaining</li>
+                                    <li>Error logging and summary report</li>
+                                </ul>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Use Cases</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2 mb-6">
+                                    <li>Catalog production - export each product page separately</li>
+                                    <li>Magazine publishing - distribute individual articles</li>
+                                    <li>Marketing materials - create separate PDFs for each design variation</li>
+                                    <li>Print production - prepare individual sheets for press</li>
+                                </ul>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">System Requirements</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Adobe InDesign CC 2019 or later</li>
+                                    <li>Windows 10/11 or macOS 10.14+</li>
+                                    <li>Minimum 4GB RAM (8GB recommended)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Installation Tab -->
+                        <div id="tab-installation" class="tab-content">
+                            <div class="prose max-w-none">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-4">Installation Instructions</h3>
+
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                                        <p class="text-blue-800 text-sm">
+                                            The installation process is the same for both Windows and macOS. The script will work immediately after placing it in the correct folder.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Step 1: Download the Script</h4>
+                                <p class="text-gray-600 mb-4">
+                                    Click the download button to save the <code class="bg-gray-100 px-2 py-1 rounded text-sm">BatchExportPages.jsx</code> file to your computer.
+                                </p>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Step 2: Locate the Scripts Folder</h4>
+                                <p class="text-gray-600 mb-2">Navigate to the InDesign Scripts Panel folder:</p>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2 mb-4">
+                                    <li><strong>Windows:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-sm">C:\Users\[Username]\AppData\Roaming\Adobe\InDesign\[Version]\en_US\Scripts\Scripts Panel\</code></li>
+                                    <li><strong>macOS:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-sm">~/Library/Preferences/Adobe InDesign/[Version]/en_US/Scripts/Scripts Panel/</code></li>
+                                </ul>
+
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-lightbulb text-yellow-600 mt-1 mr-3"></i>
+                                        <p class="text-yellow-800 text-sm">
+                                            <strong>Tip:</strong> In InDesign, go to Window &gt; Utilities &gt; Scripts, then right-click on "User" and choose "Reveal in Explorer/Finder" to quickly locate the folder.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Step 3: Copy the Script</h4>
+                                <p class="text-gray-600 mb-4">
+                                    Copy the downloaded <code class="bg-gray-100 px-2 py-1 rounded text-sm">BatchExportPages.jsx</code> file into the Scripts Panel folder.
+                                </p>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Step 4: Verify Installation</h4>
+                                <p class="text-gray-600 mb-4">
+                                    Open InDesign and go to Window &gt; Utilities &gt; Scripts. You should see "BatchExportPages" in the User folder. Double-click to run!
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Usage Guide Tab -->
+                        <div id="tab-usage" class="tab-content">
+                            <div class="prose max-w-none">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-4">How to Use</h3>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Getting Started</h4>
+                                <ol class="list-decimal list-inside text-gray-600 space-y-3 mb-6">
+                                    <li>Open your InDesign document</li>
+                                    <li>Go to Window &gt; Utilities &gt; Scripts</li>
+                                    <li>Double-click on "BatchExportPages" in the User folder</li>
+                                    <li>The script dialog will appear with export options</li>
+                                </ol>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Configuration Options</h4>
+
+                                <div class="space-y-4 mb-6">
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <h5 class="font-semibold text-gray-900 mb-2">Page Range</h5>
+                                        <p class="text-gray-600 text-sm">
+                                            Choose "All Pages" to export every page, or "Range" to specify custom pages (e.g., "1-5, 8, 12-15").
+                                        </p>
+                                    </div>
+
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <h5 class="font-semibold text-gray-900 mb-2">File Naming</h5>
+                                        <p class="text-gray-600 text-sm mb-2">
+                                            Use variables to create custom file names:
+                                        </p>
+                                        <ul class="text-gray-600 text-sm list-disc list-inside">
+                                            <li><code class="bg-gray-200 px-1 rounded">{docname}</code> - Document name</li>
+                                            <li><code class="bg-gray-200 px-1 rounded">{page}</code> - Page number</li>
+                                            <li><code class="bg-gray-200 px-1 rounded">{date}</code> - Current date</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <h5 class="font-semibold text-gray-900 mb-2">PDF Preset</h5>
+                                        <p class="text-gray-600 text-sm">
+                                            Select from your installed PDF presets including [High Quality Print], [Press Quality], or any custom presets you've created.
+                                        </p>
+                                    </div>
+
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <h5 class="font-semibold text-gray-900 mb-2">Output Folder</h5>
+                                        <p class="text-gray-600 text-sm">
+                                            Click "Browse" to select where exported PDFs should be saved. Optionally create subfolders automatically.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <h4 class="text-lg font-semibold text-gray-900 mb-3">Tips & Best Practices</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-2">
+                                    <li>Save your document before running the script</li>
+                                    <li>For large documents, close other applications to free up RAM</li>
+                                    <li>Use descriptive file naming patterns for easier organization</li>
+                                    <li>Test with a few pages first before exporting the entire document</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Screenshots Tab -->
+                        <div id="tab-images" class="tab-content">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Screenshots</h3>
+                            <div class="image-gallery">
+                                <div class="bg-gray-200 rounded-lg aspect-video flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity gallery-image">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p class="text-sm">Script Dialog</p>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-200 rounded-lg aspect-video flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity gallery-image">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p class="text-sm">Export Options</p>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-200 rounded-lg aspect-video flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity gallery-image">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p class="text-sm">Progress Bar</p>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-200 rounded-lg aspect-video flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity gallery-image">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p class="text-sm">Export Results</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Videos Tab -->
+                        <div id="tab-videos" class="tab-content">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Video Tutorials</h3>
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Getting Started Tutorial</h4>
+                                    <div class="video-container bg-gray-200 rounded-lg">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center text-gray-500">
+                                                <i class="fas fa-play-circle text-6xl mb-2"></i>
+                                                <p>Video placeholder - Replace with YouTube/Vimeo embed</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Advanced Features Walkthrough</h4>
+                                    <div class="video-container bg-gray-200 rounded-lg">
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center text-gray-500">
+                                                <i class="fas fa-play-circle text-6xl mb-2"></i>
+                                                <p>Video placeholder - Replace with YouTube/Vimeo embed</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Changelog Tab -->
+                        <div id="tab-changelog" class="tab-content">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Version History</h3>
+                            <div class="space-y-6">
+                                <div class="border-l-4 border-primary pl-4">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="font-semibold text-gray-900">Version 2.1.0</span>
+                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Latest</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-2">December 15, 2024</p>
+                                    <ul class="text-gray-600 text-sm space-y-1">
+                                        <li>+ Added support for InDesign 2025</li>
+                                        <li>+ New date variable for file naming</li>
+                                        <li>* Improved progress bar accuracy</li>
+                                        <li>* Fixed issue with special characters in file names</li>
+                                    </ul>
+                                </div>
+
+                                <div class="border-l-4 border-gray-300 pl-4">
+                                    <span class="font-semibold text-gray-900">Version 2.0.0</span>
+                                    <p class="text-sm text-gray-500 mb-2">August 20, 2024</p>
+                                    <ul class="text-gray-600 text-sm space-y-1">
+                                        <li>+ Complete UI redesign</li>
+                                        <li>+ Added preset management</li>
+                                        <li>+ Batch processing improvements</li>
+                                        <li>* Performance optimizations</li>
+                                    </ul>
+                                </div>
+
+                                <div class="border-l-4 border-gray-300 pl-4">
+                                    <span class="font-semibold text-gray-900">Version 1.5.0</span>
+                                    <p class="text-sm text-gray-500 mb-2">March 10, 2024</p>
+                                    <ul class="text-gray-600 text-sm space-y-1">
+                                        <li>+ Added bleed and slug options</li>
+                                        <li>+ Error logging feature</li>
+                                        <li>* Bug fixes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="lg:w-80 mt-6 lg:mt-0">
+                <div class="sticky-sidebar">
+                    <!-- Purchase/Download Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <div class="text-center mb-6">
+                            <div class="text-3xl font-bold text-green-600 mb-1">FREE</div>
+                            <p class="text-sm text-gray-500">No payment required</p>
+                        </div>
+
+                        <button id="download-btn" data-free="true" data-script-id="batch-export-pages" class="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors flex items-center justify-center mb-4">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Now
+                        </button>
+
+                        <div class="text-center text-sm text-gray-500">
+                            <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                            Instant download
+                        </div>
+                    </div>
+
+                    <!-- Script Info Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Script Information</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Application</span>
+                                <span class="text-gray-900 font-medium">InDesign</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Version</span>
+                                <span class="text-gray-900 font-medium">2.1.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">File Size</span>
+                                <span class="text-gray-900 font-medium">24 KB</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Downloads</span>
+                                <span class="text-gray-900 font-medium">2,450</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Last Updated</span>
+                                <span class="text-gray-900 font-medium">Dec 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Compatibility</span>
+                                <span class="text-gray-900 font-medium">CC 2019+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Author Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Author</h3>
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-primary font-semibold">SS</span>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">ScriptStore Team</div>
+                                <div class="text-sm text-gray-500">12 scripts published</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Scripts -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Related Scripts</h3>
+                        <div class="space-y-4">
+                            <a href="script-detail.html" class="block group">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-indesign/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-database text-indesign"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-medium text-gray-900 group-hover:text-primary truncate">Data Merge Pro</div>
+                                        <div class="text-sm text-gray-500">$29.99</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="script-detail.html" class="block group">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-indesign/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-search text-indesign"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-medium text-gray-900 group-hover:text-primary truncate">Quick Find Replace</div>
+                                        <div class="text-sm text-green-600">FREE</div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="script-detail.html" class="block group">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 bg-indesign/10 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-book text-indesign"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-medium text-gray-900 group-hover:text-primary truncate">Book Builder Pro</div>
+                                        <div class="text-sm text-gray-500">$39.99</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <button id="close-lightbox" class="absolute top-4 right-4 text-white text-3xl hover:opacity-80">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Full size image" class="max-w-full max-h-full">
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <a href="index.html" class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-code text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">ScriptStore</span>
+                    </a>
+                    <p class="text-sm">High-quality Adobe scripts for creative professionals.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="scripts.html" class="hover:text-white transition-colors">All Scripts</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="scripts.html?app=indesign" class="hover:text-white transition-colors">InDesign Scripts</a></li>
+                        <li><a href="scripts.html?app=photoshop" class="hover:text-white transition-colors">Photoshop Scripts</a></li>
+                        <li><a href="scripts.html?app=illustrator" class="hover:text-white transition-colors">Illustrator Scripts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2024 ScriptStore. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="admin/login.html" class="hover:text-white transition-colors">Admin</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

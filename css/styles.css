@@ -1,0 +1,406 @@
+/* Custom Styles for Adobe Scripts Marketplace */
+
+/* Line clamp utility */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* Focus styles for accessibility */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #2563EB;
+    outline-offset: 2px;
+}
+
+/* Animation for cards */
+.script-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.script-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Tab styles */
+.tab-button {
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+.tab-button:hover {
+    color: #374151;
+}
+
+.tab-button.active {
+    color: #2563EB;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #2563EB;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Image gallery lightbox */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+/* Filter sidebar animation */
+.filter-sidebar {
+    transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .filter-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 50;
+        transform: translateX(-100%);
+        background: white;
+        overflow-y: auto;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .filter-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 40;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .filter-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* Video embed container */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Admin styles */
+.admin-sidebar {
+    width: 250px;
+    min-height: calc(100vh - 64px);
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #6b7280;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-nav-item:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.admin-nav-item.active {
+    background-color: #eff6ff;
+    color: #2563EB;
+}
+
+.admin-nav-item i {
+    width: 20px;
+    margin-right: 0.75rem;
+}
+
+/* Rich text editor styles */
+.editor-toolbar {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.editor-toolbar button {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    color: #6b7280;
+    transition: background-color 0.2s ease;
+}
+
+.editor-toolbar button:hover {
+    background-color: #f3f4f6;
+}
+
+.editor-toolbar button.active {
+    background-color: #eff6ff;
+    color: #2563EB;
+}
+
+.editor-content {
+    min-height: 200px;
+    padding: 1rem;
+    outline: none;
+}
+
+.editor-content:focus {
+    outline: none;
+}
+
+/* Drag and drop upload zone */
+.upload-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.upload-zone:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+}
+
+.upload-zone.dragover {
+    border-color: #2563EB;
+    background-color: #eff6ff;
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 300px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast.success {
+    border-left: 4px solid #10b981;
+}
+
+.toast.error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+/* Loading spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2563EB;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Price badge styles */
+.badge-free {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-paid {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Checkbox styling */
+.custom-checkbox {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.custom-checkbox:checked {
+    background-color: #2563EB;
+    border-color: #2563EB;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Radio button styling */
+.custom-radio {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.custom-radio:checked {
+    border-color: #2563EB;
+    background: radial-gradient(circle, #2563EB 40%, white 40%);
+}
+
+/* Sticky sidebar for detail page */
+.sticky-sidebar {
+    position: sticky;
+    top: 80px;
+}
+
+/* Responsive image gallery grid */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.image-gallery img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.image-gallery img:hover {
+    transform: scale(1.05);
+}
+
+/* Print styles */
+@media print {
+    nav,
+    footer,
+    .no-print {
+        display: none !important;
+    }
+}

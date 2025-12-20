@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe Scripts Marketplace - Automate Your Creative Workflow</title>
+    <meta name="description" content="Discover high-quality scripts for Adobe InDesign, Photoshop, and Illustrator. Automate your workflow with free and premium scripts.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Adobe Scripts Marketplace">
+    <meta property="og:description" content="Discover high-quality scripts for Adobe InDesign, Photoshop, and Illustrator.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'adobe-red': '#FF0000',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                        <i class="fas fa-code text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">ScriptStore</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-primary font-medium">Home</a>
+                    <a href="scripts.html" class="text-gray-600 hover:text-primary transition-colors">Scripts</a>
+                    <a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bars text-gray-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-primary font-medium">Home</a>
+                <a href="scripts.html" class="block py-2 text-gray-600">Scripts</a>
+                <a href="about.html" class="block py-2 text-gray-600">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    Automate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Creative Workflow</span>
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                    Discover powerful scripts for Adobe InDesign, Photoshop, and Illustrator. Save hours of work with our curated collection of automation tools.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="scripts.html" class="inline-flex items-center justify-center px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
+                        <i class="fas fa-search mr-2"></i>
+                        Browse Scripts
+                    </a>
+                    <a href="#categories" class="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors backdrop-blur">
+                        <i class="fas fa-layer-group mr-2"></i>
+                        View Categories
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">50+</div>
+                    <div class="text-gray-600">Scripts Available</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">10K+</div>
+                    <div class="text-gray-600">Downloads</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">3</div>
+                    <div class="text-gray-600">Adobe Apps</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">24/7</div>
+                    <div class="text-gray-600">Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Scripts -->
+    <section class="py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Scripts</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Our most popular and highly-rated scripts to supercharge your Adobe workflow</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Script Card 1 -->
+                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
+                    <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                        <i class="fas fa-file-alt text-indesign text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
+                                <i class="fas fa-file-alt mr-1"></i> InDesign
+                            </span>
+                            <span class="text-green-600 font-semibold">FREE</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Batch Export Pages</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Export multiple pages to individual PDF files with custom naming conventions and settings.</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span><i class="fas fa-download mr-1"></i> 2,450 downloads</span>
+                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.8</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Script Card 2 -->
+                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
+                    <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
+                        <i class="fas fa-image text-photoshop text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
+                                <i class="fas fa-image mr-1"></i> Photoshop
+                            </span>
+                            <span class="text-primary font-semibold">$19.99</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Smart Layer Renamer</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Automatically rename layers based on content, position, or custom rules. Perfect for organizing complex PSDs.</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span><i class="fas fa-download mr-1"></i> 1,230 downloads</span>
+                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.9</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Script Card 3 -->
+                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
+                    <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
+                        <i class="fas fa-pen-nib text-illustrator text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
+                                <i class="fas fa-pen-nib mr-1"></i> Illustrator
+                            </span>
+                            <span class="text-green-600 font-semibold">FREE</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Artboard Resizer Pro</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Resize multiple artboards while maintaining proportions and repositioning elements automatically.</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span><i class="fas fa-download mr-1"></i> 890 downloads</span>
+                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.7</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="scripts.html" class="inline-flex items-center text-primary hover:text-primary-dark font-semibold">
+                    View All Scripts <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-16 lg:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Browse by Application</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Find scripts specifically designed for your favorite Adobe application</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- InDesign -->
+                <a href="scripts.html?app=indesign" class="group relative bg-gradient-to-br from-indesign to-pink-600 rounded-2xl p-8 text-white overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-file-alt text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">InDesign</h3>
+                        <p class="text-white/80 mb-4">Scripts for layout, publishing, and document automation</p>
+                        <div class="flex items-center text-sm">
+                            <span class="bg-white/20 px-3 py-1 rounded-full">18 Scripts</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Photoshop -->
+                <a href="scripts.html?app=photoshop" class="group relative bg-gradient-to-br from-photoshop to-blue-600 rounded-2xl p-8 text-white overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-image text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Photoshop</h3>
+                        <p class="text-white/80 mb-4">Image editing, batch processing, and layer management</p>
+                        <div class="flex items-center text-sm">
+                            <span class="bg-white/20 px-3 py-1 rounded-full">22 Scripts</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Illustrator -->
+                <a href="scripts.html?app=illustrator" class="group relative bg-gradient-to-br from-illustrator to-orange-600 rounded-2xl p-8 text-white overflow-hidden">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-pen-nib text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Illustrator</h3>
+                        <p class="text-white/80 mb-4">Vector graphics, artboard tools, and path operations</p>
+                        <div class="flex items-center text-sm">
+                            <span class="bg-white/20 px-3 py-1 rounded-full">15 Scripts</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 lg:py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Get started with our scripts in just a few simple steps</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-primary">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Browse & Choose</h3>
+                    <p class="text-gray-600">Explore our collection and find the perfect script for your needs. Filter by app, price, or popularity.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-primary">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Download or Purchase</h3>
+                    <p class="text-gray-600">Free scripts can be downloaded instantly. Premium scripts are available through secure checkout.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-primary">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Install & Automate</h3>
+                    <p class="text-gray-600">Follow our detailed instructions to install the script and start automating your workflow.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 lg:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What Users Say</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Trusted by thousands of creative professionals worldwide</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"These scripts have saved me countless hours on repetitive tasks. The batch export script alone has transformed my workflow!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-primary font-semibold">SJ</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Sarah Johnson</div>
+                            <div class="text-sm text-gray-500">Graphic Designer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"Excellent documentation with video tutorials. Even as a beginner, I was able to install and use the scripts without any issues."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-primary font-semibold">MC</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Mike Chen</div>
+                            <div class="text-sm text-gray-500">Production Artist</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The premium scripts are worth every penny. Great support team and regular updates. Highly recommended for any creative agency."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-primary font-semibold">AR</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900">Alex Rivera</div>
+                            <div class="text-sm text-gray-500">Creative Director</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 lg:py-24 bg-gradient-to-br from-primary to-primary-dark text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Boost Your Productivity?</h2>
+            <p class="text-xl text-blue-100 mb-8">Start exploring our collection of Adobe scripts today. Many are completely free!</p>
+            <a href="scripts.html" class="inline-flex items-center justify-center px-8 py-4 bg-white text-primary hover:bg-gray-100 font-semibold rounded-lg transition-colors">
+                <i class="fas fa-rocket mr-2"></i>
+                Get Started Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <a href="index.html" class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-code text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">ScriptStore</span>
+                    </a>
+                    <p class="text-sm">High-quality Adobe scripts for creative professionals. Automate your workflow today.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="scripts.html" class="hover:text-white transition-colors">All Scripts</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="scripts.html?app=indesign" class="hover:text-white transition-colors">InDesign Scripts</a></li>
+                        <li><a href="scripts.html?app=photoshop" class="hover:text-white transition-colors">Photoshop Scripts</a></li>
+                        <li><a href="scripts.html?app=illustrator" class="hover:text-white transition-colors">Illustrator Scripts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2024 ScriptStore. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="admin/login.html" class="hover:text-white transition-colors">Admin</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

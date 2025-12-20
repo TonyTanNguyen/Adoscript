@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin Panel</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="flex items-center justify-between px-6 h-16">
+            <!-- Logo -->
+            <a href="dashboard.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                    <i class="fas fa-code text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-bold text-gray-900">ScriptStore</span>
+                <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Admin</span>
+            </a>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-4">
+                <a href="../index.html" target="_blank" class="text-gray-600 hover:text-primary transition-colors" title="View Site">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                        <span class="text-primary text-sm font-semibold">A</span>
+                    </div>
+                    <span class="text-gray-700 font-medium hidden sm:block">Admin</span>
+                </div>
+                <a href="login.html" class="text-gray-600 hover:text-red-500 transition-colors" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar bg-white shadow-sm p-4 hidden md:block">
+            <nav class="space-y-1">
+                <a href="dashboard.html" class="admin-nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="scripts.html" class="admin-nav-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>All Scripts</span>
+                </a>
+                <a href="upload.html" class="admin-nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Script</span>
+                </a>
+                <a href="orders.html" class="admin-nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <p class="text-gray-600">Welcome back! Here's an overview of your marketplace.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-code text-blue-600 text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium">+2 new</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-1">55</div>
+                    <div class="text-gray-600 text-sm">Total Scripts</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-download text-green-600 text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium">+12%</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-1">12,450</div>
+                    <div class="text-gray-600 text-sm">Total Downloads</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium">+5 this week</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-1">248</div>
+                    <div class="text-gray-600 text-sm">Total Orders</div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-yellow-600 text-xl"></i>
+                        </div>
+                        <span class="text-green-500 text-sm font-medium">+8%</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-1">$4,856</div>
+                    <div class="text-gray-600 text-sm">Total Revenue</div>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Recent Scripts -->
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="p-6 border-b flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Recent Scripts</h2>
+                        <a href="scripts.html" class="text-primary text-sm hover:underline">View All</a>
+                    </div>
+                    <div class="divide-y">
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-indesign"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Batch Export Pages</div>
+                                    <div class="text-sm text-gray-500">InDesign</div>
+                                </div>
+                            </div>
+                            <span class="text-green-600 font-medium">FREE</span>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-image text-photoshop"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Smart Layer Renamer</div>
+                                    <div class="text-sm text-gray-500">Photoshop</div>
+                                </div>
+                            </div>
+                            <span class="text-primary font-medium">$19.99</span>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-illustrator/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-pen-nib text-illustrator"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Artboard Resizer Pro</div>
+                                    <div class="text-sm text-gray-500">Illustrator</div>
+                                </div>
+                            </div>
+                            <span class="text-green-600 font-medium">FREE</span>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indesign/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-database text-indesign"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Data Merge Pro</div>
+                                    <div class="text-sm text-gray-500">InDesign</div>
+                                </div>
+                            </div>
+                            <span class="text-primary font-medium">$29.99</span>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-photoshop/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-compress-arrows-alt text-photoshop"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">Batch Resize Images</div>
+                                    <div class="text-sm text-gray-500">Photoshop</div>
+                                </div>
+                            </div>
+                            <span class="text-green-600 font-medium">FREE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="p-6 border-b flex items-center justify-between">
+                        <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
+                        <a href="orders.html" class="text-primary text-sm hover:underline">View All</a>
+                    </div>
+                    <div class="divide-y">
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <div class="font-medium text-gray-900">Smart Layer Renamer</div>
+                                <div class="text-sm text-gray-500">john@example.com</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-medium text-gray-900">$19.99</div>
+                                <div class="text-xs text-green-600">Completed</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <div class="font-medium text-gray-900">Data Merge Pro</div>
+                                <div class="text-sm text-gray-500">sarah@design.co</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-medium text-gray-900">$29.99</div>
+                                <div class="text-xs text-green-600">Completed</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <div class="font-medium text-gray-900">Book Builder Pro</div>
+                                <div class="text-sm text-gray-500">mike@agency.com</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-medium text-gray-900">$39.99</div>
+                                <div class="text-xs text-green-600">Completed</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <div class="font-medium text-gray-900">Color Palette Generator</div>
+                                <div class="text-sm text-gray-500">alex@studio.io</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-medium text-gray-900">$14.99</div>
+                                <div class="text-xs text-green-600">Completed</div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 flex items-center justify-between hover:bg-gray-50">
+                            <div>
+                                <div class="font-medium text-gray-900">Action Batch Runner</div>
+                                <div class="text-sm text-gray-500">emma@creative.net</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="font-medium text-gray-900">$24.99</div>
+                                <div class="text-xs text-green-600">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-8 bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="flex flex-wrap gap-4">
+                    <a href="upload.html" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="fas fa-plus mr-2"></i>
+                        Upload New Script
+                    </a>
+                    <a href="scripts.html" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-edit mr-2"></i>
+                        Manage Scripts
+                    </a>
+                    <a href="orders.html" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-file-invoice mr-2"></i>
+                        View Orders
+                    </a>
+                    <a href="../index.html" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>
+                        View Website
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2">
+        <a href="dashboard.html" class="flex flex-col items-center py-2 px-4 text-primary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="scripts.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-file-code text-xl"></i>
+            <span class="text-xs mt-1">Scripts</span>
+        </a>
+        <a href="upload.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-upload text-xl"></i>
+            <span class="text-xs mt-1">Upload</span>
+        </a>
+        <a href="orders.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span class="text-xs mt-1">Orders</span>
+        </a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Scripts - Adobe Scripts Marketplace</title>
+    <meta name="description" content="Browse our complete collection of Adobe scripts for InDesign, Photoshop, and Illustrator. Free and premium scripts available.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'adobe-red': '#FF0000',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                        <i class="fas fa-code text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">ScriptStore</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="scripts.html" class="text-primary font-medium">Scripts</a>
+                    <a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bars text-gray-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-600">Home</a>
+                <a href="scripts.html" class="block py-2 text-primary font-medium">Scripts</a>
+                <a href="about.html" class="block py-2 text-gray-600">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="bg-white border-b py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">All Scripts</h1>
+            <p class="text-gray-600">Browse our complete collection of Adobe automation scripts</p>
+        </div>
+    </section>
+
+    <!-- Filter Overlay (Mobile) -->
+    <div id="filter-overlay" class="filter-overlay md:hidden"></div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex gap-8">
+            <!-- Filter Sidebar -->
+            <aside id="filter-sidebar" class="filter-sidebar w-64 flex-shrink-0 hidden md:block">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-semibold text-gray-900">Filters</h3>
+                        <button id="close-filter" class="md:hidden text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <form id="filter-form">
+                        <!-- Application Filter -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Application</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="app" value="indesign" id="app-indesign" class="custom-checkbox">
+                                    <span class="ml-3 text-gray-600 flex items-center">
+                                        <i class="fas fa-file-alt text-indesign mr-2"></i>
+                                        InDesign
+                                    </span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="app" value="photoshop" id="app-photoshop" class="custom-checkbox">
+                                    <span class="ml-3 text-gray-600 flex items-center">
+                                        <i class="fas fa-image text-photoshop mr-2"></i>
+                                        Photoshop
+                                    </span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="app" value="illustrator" id="app-illustrator" class="custom-checkbox">
+                                    <span class="ml-3 text-gray-600 flex items-center">
+                                        <i class="fas fa-pen-nib text-illustrator mr-2"></i>
+                                        Illustrator
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Price Filter -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Price</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="price" value="free" id="price-free" class="custom-checkbox">
+                                    <span class="ml-3 text-gray-600">Free</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="price" value="paid" id="price-paid" class="custom-checkbox">
+                                    <span class="ml-3 text-gray-600">Paid</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <button type="button" id="reset-filters" class="w-full py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                            <i class="fas fa-undo mr-2"></i>Reset Filters
+                        </button>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Scripts Grid -->
+            <main class="flex-1">
+                <!-- Toolbar -->
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <!-- Mobile Filter Toggle -->
+                        <button id="filter-toggle" class="md:hidden inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filters
+                        </button>
+
+                        <!-- Results Count -->
+                        <span id="results-count" class="text-gray-600 text-sm">Showing 12 of 12 scripts</span>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <!-- Sort Dropdown -->
+                        <select id="sort-select" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="newest">Newest First</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="name-az">Name: A to Z</option>
+                            <option value="name-za">Name: Z to A</option>
+                        </select>
+
+                        <!-- View Toggle -->
+                        <div class="hidden sm:flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
+                            <button class="view-toggle active bg-gray-200 px-3 py-2 text-gray-700" data-view="grid">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-toggle px-3 py-2 text-gray-700" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Filters -->
+                <div id="active-filters" class="flex flex-wrap gap-2 mb-6"></div>
+
+                <!-- Scripts Grid -->
+                <div id="scripts-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Script Card 1 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="indesign" data-price="free" data-price-value="0" data-downloads="2450" data-date="20241215" data-name="Batch Export Pages">
+                        <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                            <i class="fas fa-file-alt text-indesign text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
+                                    <i class="fas fa-file-alt mr-1"></i> InDesign
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Batch Export Pages</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Export multiple pages to individual PDF files with custom naming conventions.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 2,450</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.8</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 2 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="photoshop" data-price="paid" data-price-value="19.99" data-downloads="1230" data-date="20241210" data-name="Smart Layer Renamer">
+                        <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
+                            <i class="fas fa-layer-group text-photoshop text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
+                                    <i class="fas fa-image mr-1"></i> Photoshop
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$19.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Smart Layer Renamer</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Automatically rename layers based on content, position, or custom rules.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 1,230</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.9</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 3 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="illustrator" data-price="free" data-price-value="0" data-downloads="890" data-date="20241205" data-name="Artboard Resizer Pro">
+                        <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
+                            <i class="fas fa-expand-arrows-alt text-illustrator text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
+                                    <i class="fas fa-pen-nib mr-1"></i> Illustrator
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Artboard Resizer Pro</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Resize multiple artboards while maintaining proportions automatically.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 890</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.7</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 4 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="indesign" data-price="paid" data-price-value="29.99" data-downloads="756" data-date="20241201" data-name="Data Merge Pro">
+                        <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                            <i class="fas fa-database text-indesign text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
+                                    <i class="fas fa-file-alt mr-1"></i> InDesign
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$29.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Data Merge Pro</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Advanced data merge with support for images, QR codes, and conditional content.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 756</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.9</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 5 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="photoshop" data-price="free" data-price-value="0" data-downloads="3420" data-date="20241128" data-name="Batch Resize Images">
+                        <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
+                            <i class="fas fa-compress-arrows-alt text-photoshop text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
+                                    <i class="fas fa-image mr-1"></i> Photoshop
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Batch Resize Images</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Resize hundreds of images at once with multiple output size options.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 3,420</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.6</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 6 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="illustrator" data-price="paid" data-price-value="14.99" data-downloads="520" data-date="20241125" data-name="Color Palette Generator">
+                        <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
+                            <i class="fas fa-palette text-illustrator text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
+                                    <i class="fas fa-pen-nib mr-1"></i> Illustrator
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$14.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Color Palette Generator</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Generate harmonious color palettes from images or color theory rules.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 520</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.5</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 7 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="indesign" data-price="free" data-price-value="0" data-downloads="1890" data-date="20241120" data-name="Quick Find Replace">
+                        <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                            <i class="fas fa-search text-indesign text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
+                                    <i class="fas fa-file-alt mr-1"></i> InDesign
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Quick Find Replace</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Enhanced find and replace with regex support and batch processing.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 1,890</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.7</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 8 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="photoshop" data-price="paid" data-price-value="24.99" data-downloads="980" data-date="20241115" data-name="Action Batch Runner">
+                        <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
+                            <i class="fas fa-play-circle text-photoshop text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
+                                    <i class="fas fa-image mr-1"></i> Photoshop
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$24.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Action Batch Runner</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Run multiple actions on entire folders with detailed logging and error handling.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 980</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.8</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 9 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="illustrator" data-price="free" data-price-value="0" data-downloads="670" data-date="20241110" data-name="Export Artboards">
+                        <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
+                            <i class="fas fa-file-export text-illustrator text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
+                                    <i class="fas fa-pen-nib mr-1"></i> Illustrator
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Export Artboards</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Export artboards to multiple formats (PNG, SVG, PDF) in one click.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 670</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.6</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 10 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="indesign" data-price="paid" data-price-value="39.99" data-downloads="445" data-date="20241105" data-name="Book Builder Pro">
+                        <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
+                            <i class="fas fa-book text-indesign text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
+                                    <i class="fas fa-file-alt mr-1"></i> InDesign
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$39.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Book Builder Pro</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Automate book production with TOC generation, pagination, and preflight checks.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 445</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.9</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 11 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="photoshop" data-price="free" data-price-value="0" data-downloads="2100" data-date="20241101" data-name="Watermark Batch">
+                        <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
+                            <i class="fas fa-stamp text-photoshop text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
+                                    <i class="fas fa-image mr-1"></i> Photoshop
+                                </span>
+                                <span class="text-green-600 font-semibold text-sm">FREE</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Watermark Batch</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Add watermarks to multiple images with customizable position and opacity.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 2,100</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.5</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Script Card 12 -->
+                    <a href="script-detail.html" class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+                       data-app="illustrator" data-price="paid" data-price-value="19.99" data-downloads="380" data-date="20241028" data-name="Path Cleaner">
+                        <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
+                            <i class="fas fa-broom text-illustrator text-5xl opacity-50 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
+                                    <i class="fas fa-pen-nib mr-1"></i> Illustrator
+                                </span>
+                                <span class="text-primary font-semibold text-sm">$19.99</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Path Cleaner</h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">Clean up messy vector paths by removing extra points and smoothing curves.</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-download mr-1"></i> 380</span>
+                                <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.7</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Load More -->
+                <div class="text-center mt-12">
+                    <button class="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>
+                        Load More Scripts
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <a href="index.html" class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-code text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">ScriptStore</span>
+                    </a>
+                    <p class="text-sm">High-quality Adobe scripts for creative professionals.</p>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="scripts.html" class="hover:text-white transition-colors">All Scripts</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="scripts.html?app=indesign" class="hover:text-white transition-colors">InDesign Scripts</a></li>
+                        <li><a href="scripts.html?app=photoshop" class="hover:text-white transition-colors">Photoshop Scripts</a></li>
+                        <li><a href="scripts.html?app=illustrator" class="hover:text-white transition-colors">Illustrator Scripts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2024 ScriptStore. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="admin/login.html" class="hover:text-white transition-colors">Admin</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

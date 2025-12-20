@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - Admin Panel</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen pb-20 md:pb-0">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="flex items-center justify-between px-6 h-16">
+            <!-- Logo -->
+            <a href="dashboard.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                    <i class="fas fa-code text-white text-lg"></i>
+                </div>
+                <span class="text-xl font-bold text-gray-900">ScriptStore</span>
+                <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Admin</span>
+            </a>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-4">
+                <a href="../index.html" target="_blank" class="text-gray-600 hover:text-primary transition-colors" title="View Site">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                        <span class="text-primary text-sm font-semibold">A</span>
+                    </div>
+                    <span class="text-gray-700 font-medium hidden sm:block">Admin</span>
+                </div>
+                <a href="login.html" class="text-gray-600 hover:text-red-500 transition-colors" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar bg-white shadow-sm p-4 hidden md:block">
+            <nav class="space-y-1">
+                <a href="dashboard.html" class="admin-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="scripts.html" class="admin-nav-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>All Scripts</span>
+                </a>
+                <a href="upload.html" class="admin-nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload Script</span>
+                </a>
+                <a href="orders.html" class="admin-nav-item active">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Orders</h1>
+                    <p class="text-gray-600">View and manage all orders</p>
+                </div>
+                <button onclick="exportOrders()" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    Export CSV
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Orders</p>
+                            <p class="text-2xl font-bold text-gray-900">248</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Revenue</p>
+                            <p class="text-2xl font-bold text-gray-900">$4,856</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">This Month</p>
+                            <p class="text-2xl font-bold text-gray-900">$892</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Avg Order Value</p>
+                            <p class="text-2xl font-bold text-gray-900">$19.58</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Search by email or order ID..."
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="failed">Failed</option>
+                        <option value="refunded">Refunded</option>
+                    </select>
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option value="">All Payment Methods</option>
+                        <option value="stripe">Stripe</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+                    <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Script</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001248</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Smart Layer Renamer</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">john@example.com</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$19.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
+                                        Stripe
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 20, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001248')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001247</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Data Merge Pro</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">sarah@design.co</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$29.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-paypal text-blue-600 mr-1"></i>
+                                        PayPal
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 19, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001247')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001246</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Book Builder Pro</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">mike@agency.com</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$39.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
+                                        Stripe
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 18, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001246')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001245</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Color Palette Generator</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">alex@studio.io</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$14.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-paypal text-blue-600 mr-1"></i>
+                                        PayPal
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 17, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001245')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001244</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Action Batch Runner</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">emma@creative.net</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$24.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
+                                        Stripe
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 16, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001244')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-sm text-gray-900">#ORD-001243</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900">Path Cleaner</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-gray-900">lisa@graphics.com</div>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">$19.99</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center">
+                                        <i class="fab fa-stripe text-purple-600 mr-1"></i>
+                                        Stripe
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Refunded
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600 text-sm">Dec 15, 2024</td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="viewOrder('ORD-001243')" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t flex items-center justify-between">
+                    <p class="text-sm text-gray-600">Showing 1 to 6 of 248 orders</p>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-500 hover:bg-gray-50" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-1 bg-primary text-white rounded">1</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">2</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">3</button>
+                        <span class="px-3 py-1 text-gray-500">...</span>
+                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">42</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="order-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Order Details</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Order ID</span>
+                        <span class="font-mono font-medium">#ORD-001248</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Script</span>
+                        <span class="font-medium">Smart Layer Renamer</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Customer Email</span>
+                        <span class="font-medium">john@example.com</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Amount</span>
+                        <span class="font-bold text-lg">$19.99</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Payment Method</span>
+                        <span class="font-medium">
+                            <i class="fab fa-stripe text-purple-600 mr-1"></i>
+                            Stripe
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Payment ID</span>
+                        <span class="font-mono text-sm">pi_3MqJw...</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Status</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Completed
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Date</span>
+                        <span class="font-medium">Dec 20, 2024 at 2:34 PM</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Downloads</span>
+                        <span class="font-medium">1 of 3</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t">
+                    <h4 class="font-medium text-gray-900 mb-3">Actions</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors text-sm">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Resend Email
+                        </button>
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                            <i class="fas fa-redo mr-2"></i>
+                            Reset Downloads
+                        </button>
+                        <button class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm">
+                            <i class="fas fa-undo mr-2"></i>
+                            Refund
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2">
+        <a href="dashboard.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="scripts.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-file-code text-xl"></i>
+            <span class="text-xs mt-1">Scripts</span>
+        </a>
+        <a href="upload.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-upload text-xl"></i>
+            <span class="text-xs mt-1">Upload</span>
+        </a>
+        <a href="orders.html" class="flex flex-col items-center py-2 px-4 text-primary">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span class="text-xs mt-1">Orders</span>
+        </a>
+    </nav>
+
+    <script>
+        function viewOrder(orderId) {
+            document.getElementById('order-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('order-modal').classList.add('hidden');
+        }
+
+        function exportOrders() {
+            alert('Orders exported to CSV! (Demo mode - no backend)');
+        }
+
+        // Close modal on outside click
+        document.getElementById('order-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

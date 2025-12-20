@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - ScriptStore</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#2563EB',
+                        'primary-dark': '#1D4ED8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full mx-4">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="../index.html" class="inline-flex items-center space-x-2">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+                    <i class="fas fa-code text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold text-gray-900">ScriptStore</span>
+            </a>
+            <p class="text-gray-600 mt-2">Admin Panel</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6 text-center">Sign In</h1>
+
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" name="email" required
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="admin@example.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required
+                               class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="Enter your password">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i id="password-icon" class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" name="remember" class="custom-checkbox">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Demo credentials notice -->
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <strong>Demo:</strong> Use any email/password to access the admin panel.
+                </p>
+            </div>
+        </div>
+
+        <!-- Back to site -->
+        <div class="text-center mt-6">
+            <a href="../index.html" class="text-gray-600 hover:text-primary transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Website
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('password-icon');
+
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // For demo purposes, redirect to dashboard
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>
