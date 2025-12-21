@@ -21,9 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize form handlers
     initForms();
-
-    // Parse URL parameters for filters
-    parseUrlParams();
 });
 
 // Determine which page we're on and load appropriate content
@@ -225,26 +222,16 @@ async function loadScriptsPage() {
     `;
 
     try {
-        // Get filter parameters from URL
-        const params = new URLSearchParams(window.location.search);
-        let url = `${API_BASE}/scripts.php?action=public-list`;
-
-        if (params.get('app')) {
-            url += `&application=${params.get('app')}`;
-        }
-        if (params.get('price')) {
-            url += `&price_type=${params.get('price')}`;
-        }
-        if (params.get('sort')) {
-            url += `&sort=${params.get('sort')}`;
-        }
-
-        const response = await fetch(url);
+        // Always fetch all scripts, filtering is done client-side
+        const response = await fetch(`${API_BASE}/scripts.php?action=public-list`);
         const data = await response.json();
 
         if (data.success && data.scripts) {
             renderScriptsGrid(data.scripts);
-            updateResultsCount();
+            // Apply any URL-based filters after rendering
+            parseUrlParams();
+            // Apply current filter state
+            filterScripts();
         } else {
             container.innerHTML = `
                 <div class="col-span-full text-center py-12">
@@ -785,15 +772,23 @@ function updateResultsCount() {
 function parseUrlParams() {
     const params = new URLSearchParams(window.location.search);
     const app = params.get('app');
+    const price = params.get('price');
 
     if (app) {
         const checkbox = document.getElementById(`app-${app}`);
         if (checkbox) {
             checkbox.checked = true;
-            updateActiveFilters();
-            filterScripts();
         }
     }
+
+    if (price) {
+        const checkbox = document.getElementById(`price-${price}`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    }
+
+    updateActiveFilters();
 }
 
 // Tabs for detail page
