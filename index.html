@@ -27,8 +27,8 @@
                         'indesign': '#FF3366',
                         'photoshop': '#31A8FF',
                         'illustrator': '#FF9A00',
-                        'primary': '#2563EB',
-                        'primary-dark': '#1D4ED8',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
                     }
                 }
             }
@@ -104,11 +104,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">50+</div>
+                    <div id="stat-scripts" class="text-3xl md:text-4xl font-bold text-primary mb-1">-</div>
                     <div class="text-gray-600">Scripts Available</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-3xl md:text-4xl font-bold text-primary mb-1">10K+</div>
+                    <div id="stat-downloads" class="text-3xl md:text-4xl font-bold text-primary mb-1">-</div>
                     <div class="text-gray-600">Downloads</div>
                 </div>
                 <div class="text-center">
@@ -131,69 +131,12 @@
                 <p class="text-gray-600 max-w-2xl mx-auto">Our most popular and highly-rated scripts to supercharge your Adobe workflow</p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Script Card 1 -->
-                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
-                    <div class="aspect-video bg-gradient-to-br from-indesign/20 to-indesign/5 flex items-center justify-center">
-                        <i class="fas fa-file-alt text-indesign text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indesign/10 text-indesign">
-                                <i class="fas fa-file-alt mr-1"></i> InDesign
-                            </span>
-                            <span class="text-green-600 font-semibold">FREE</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Batch Export Pages</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Export multiple pages to individual PDF files with custom naming conventions and settings.</p>
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span><i class="fas fa-download mr-1"></i> 2,450 downloads</span>
-                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.8</span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Script Card 2 -->
-                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
-                    <div class="aspect-video bg-gradient-to-br from-photoshop/20 to-photoshop/5 flex items-center justify-center">
-                        <i class="fas fa-image text-photoshop text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-photoshop/10 text-photoshop">
-                                <i class="fas fa-image mr-1"></i> Photoshop
-                            </span>
-                            <span class="text-primary font-semibold">$19.99</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Smart Layer Renamer</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Automatically rename layers based on content, position, or custom rules. Perfect for organizing complex PSDs.</p>
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span><i class="fas fa-download mr-1"></i> 1,230 downloads</span>
-                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.9</span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Script Card 3 -->
-                <a href="script-detail.html" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
-                    <div class="aspect-video bg-gradient-to-br from-illustrator/20 to-illustrator/5 flex items-center justify-center">
-                        <i class="fas fa-pen-nib text-illustrator text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-illustrator/10 text-illustrator">
-                                <i class="fas fa-pen-nib mr-1"></i> Illustrator
-                            </span>
-                            <span class="text-green-600 font-semibold">FREE</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">Artboard Resizer Pro</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Resize multiple artboards while maintaining proportions and repositioning elements automatically.</p>
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span><i class="fas fa-download mr-1"></i> 890 downloads</span>
-                            <span><i class="fas fa-star text-yellow-400 mr-1"></i> 4.7</span>
-                        </div>
-                    </div>
-                </a>
+            <div id="featured-scripts" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Scripts will be loaded dynamically -->
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-500">Loading scripts...</p>
+                </div>
             </div>
 
             <div class="text-center mt-12">
@@ -223,7 +166,7 @@
                         <h3 class="text-2xl font-bold mb-2">InDesign</h3>
                         <p class="text-white/80 mb-4">Scripts for layout, publishing, and document automation</p>
                         <div class="flex items-center text-sm">
-                            <span class="bg-white/20 px-3 py-1 rounded-full">18 Scripts</span>
+                            <span id="count-indesign" class="bg-white/20 px-3 py-1 rounded-full">0 Scripts</span>
                         </div>
                     </div>
                 </a>
@@ -238,7 +181,7 @@
                         <h3 class="text-2xl font-bold mb-2">Photoshop</h3>
                         <p class="text-white/80 mb-4">Image editing, batch processing, and layer management</p>
                         <div class="flex items-center text-sm">
-                            <span class="bg-white/20 px-3 py-1 rounded-full">22 Scripts</span>
+                            <span id="count-photoshop" class="bg-white/20 px-3 py-1 rounded-full">0 Scripts</span>
                         </div>
                     </div>
                 </a>
@@ -253,7 +196,7 @@
                         <h3 class="text-2xl font-bold mb-2">Illustrator</h3>
                         <p class="text-white/80 mb-4">Vector graphics, artboard tools, and path operations</p>
                         <div class="flex items-center text-sm">
-                            <span class="bg-white/20 px-3 py-1 rounded-full">15 Scripts</span>
+                            <span id="count-illustrator" class="bg-white/20 px-3 py-1 rounded-full">0 Scripts</span>
                         </div>
                     </div>
                 </a>

@@ -18,8 +18,8 @@
                         'indesign': '#FF3366',
                         'photoshop': '#31A8FF',
                         'illustrator': '#FF9A00',
-                        'primary': '#2563EB',
-                        'primary-dark': '#1D4ED8',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
                     }
                 }
             }
@@ -72,13 +72,21 @@
                     <i class="fas fa-file-code"></i>
                     <span>All Scripts</span>
                 </a>
+                <a href="quick-upload.html" class="admin-nav-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Quick Upload (AI)</span>
+                </a>
                 <a href="upload.html" class="admin-nav-item">
                     <i class="fas fa-upload"></i>
-                    <span>Upload Script</span>
+                    <span>Manual Upload</span>
                 </a>
                 <a href="orders.html" class="admin-nav-item">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Orders</span>
+                </a>
+                <a href="settings.html" class="admin-nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
                 </a>
             </nav>
         </aside>
@@ -135,6 +143,7 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Downloads</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orders</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -195,7 +204,7 @@
             };
 
             const tbody = document.getElementById('scripts-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading...</td></tr>';
 
             try {
                 const result = await fetchScripts(params);
@@ -204,17 +213,17 @@
                     renderScripts(result.scripts || []);
                     renderPagination(result.total || 0, result.page || 1, result.limit || 10);
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Failed to load scripts</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-red-500">Failed to load scripts</td></tr>';
                 }
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-500">Error loading scripts</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-red-500">Error loading scripts</td></tr>';
             }
         }
 
         function renderScripts(scripts) {
             const tbody = document.getElementById('scripts-table-body');
             if (scripts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No scripts found. <a href="upload.html" class="text-primary hover:underline">Upload your first script</a></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No scripts found. <a href="upload.html" class="text-primary hover:underline">Upload your first script</a></td></tr>';
                 return;
             }
 
@@ -234,18 +243,32 @@
                     <td class="px-6 py-4">${getAppBadge(script.application)}</td>
                     <td class="px-6 py-4">${formatPrice(script.price, script.price_type)}</td>
                     <td class="px-6 py-4 text-gray-600">${formatNumber(script.downloads || 0)}</td>
+                    <td class="px-6 py-4">
+                        ${script.order_count > 0 
+                            ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">${script.order_count}</span>`
+                            : `<span class="text-gray-400">0</span>`
+                        }
+                    </td>
                     <td class="px-6 py-4">${getStatusBadge(script.status)}</td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
+                            <button onclick="toggleStatus(${script.id})" class="p-2 ${script.status === 'published' ? 'text-green-500 hover:text-yellow-500' : 'text-yellow-500 hover:text-green-500'} transition-colors" title="${script.status === 'published' ? 'Unpublish (set to draft)' : 'Publish'}">
+                                <i class="fas ${script.status === 'published' ? 'fa-toggle-on' : 'fa-toggle-off'}"></i>
+                            </button>
                             <a href="upload.html?id=${script.id}" class="p-2 text-gray-500 hover:text-primary transition-colors" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a href="../script-detail.html?slug=${script.slug}" target="_blank" class="p-2 text-gray-500 hover:text-primary transition-colors" title="View">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <button onclick="confirmDelete(${script.id}, '${escapeHtml(script.name).replace(/'/g, "\\'")}')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            ${script.order_count > 0 
+                                ? `<button disabled class="p-2 text-gray-300 cursor-not-allowed" title="Cannot delete: ${script.order_count} order(s) exist">
+                                    <i class="fas fa-trash"></i>
+                                </button>`
+                                : `<button onclick="confirmDelete(${script.id}, '${escapeHtml(script.name).replace(/'/g, "\\'")}')" class="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>`
+                            }
                         </div>
                     </td>
                 </tr>
@@ -297,6 +320,21 @@
                 } catch (error) {
                     showToast('Failed to delete script', 'error');
                 }
+            }
+        }
+
+        async function toggleStatus(id) {
+            try {
+                const result = await toggleScriptStatus(id);
+                if (result.success) {
+                    const newStatus = result.status || 'updated';
+                    showToast(`Script ${newStatus === 'published' ? 'published' : 'set to draft'}`);
+                    loadScripts();
+                } else {
+                    showToast(result.error || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to update status', 'error');
             }
         }
 

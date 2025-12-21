@@ -1,8 +1,14 @@
 // Adobe Scripts Marketplace - Main JavaScript
 
+// API Base URL - change for production
+const API_BASE = 'api';
+
 document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     initMobileMenu();
+
+    // Load dynamic content based on page
+    loadPageContent();
 
     // Initialize filters on catalog page
     initFilters();
@@ -19,6 +25,529 @@ document.addEventListener('DOMContentLoaded', function() {
     // Parse URL parameters for filters
     parseUrlParams();
 });
+
+// Determine which page we're on and load appropriate content
+function loadPageContent() {
+    const path = window.location.pathname;
+
+    if (path.endsWith('index.html') || path.endsWith('/') || path === '') {
+        loadHomepageContent();
+    } else if (path.endsWith('scripts.html')) {
+        loadScriptsPage();
+    } else if (path.endsWith('script-detail.html')) {
+        loadScriptDetail();
+    }
+}
+
+// Homepage content loader
+async function loadHomepageContent() {
+    try {
+        // Fetch all published scripts
+        const response = await fetch(`${API_BASE}/scripts.php?action=public-list`);
+        const data = await response.json();
+
+        if (data.success && data.scripts) {
+            const scripts = data.scripts;
+
+            // Update stats
+            updateHomepageStats(scripts);
+
+            // Render featured scripts (show first 6)
+            renderFeaturedScripts(scripts.slice(0, 6));
+
+            // Update category counts
+            updateCategoryCounts(scripts);
+        } else {
+            showNoScriptsMessage();
+        }
+    } catch (error) {
+        console.error('Error loading homepage content:', error);
+        showNoScriptsMessage();
+    }
+}
+
+// Update homepage stats
+function updateHomepageStats(scripts) {
+    const statScripts = document.getElementById('stat-scripts');
+    const statDownloads = document.getElementById('stat-downloads');
+
+    if (statScripts) {
+        statScripts.textContent = scripts.length;
+    }
+
+    if (statDownloads) {
+        const totalDownloads = scripts.reduce((sum, s) => sum + (parseInt(s.downloads) || 0), 0);
+        statDownloads.textContent = formatNumber(totalDownloads);
+    }
+}
+
+// Update category counts
+function updateCategoryCounts(scripts) {
+    const counts = {
+        indesign: 0,
+        photoshop: 0,
+        illustrator: 0
+    };
+
+    scripts.forEach(script => {
+        const app = script.application.toLowerCase();
+        if (counts.hasOwnProperty(app)) {
+            counts[app]++;
+        }
+    });
+
+    Object.keys(counts).forEach(app => {
+        const element = document.getElementById(`count-${app}`);
+        if (element) {
+            element.textContent = `${counts[app]} Script${counts[app] !== 1 ? 's' : ''}`;
+        }
+    });
+}
+
+// Render featured scripts on homepage
+function renderFeaturedScripts(scripts) {
+    const container = document.getElementById('featured-scripts');
+    if (!container) return;
+
+    if (scripts.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No scripts available yet. Check back soon!</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = scripts.map(script => createScriptCard(script)).join('');
+}
+
+// Show no scripts message
+function showNoScriptsMessage() {
+    const container = document.getElementById('featured-scripts');
+    if (container) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No scripts available yet. Check back soon!</p>
+            </div>
+        `;
+    }
+}
+
+// Create a script card HTML
+function createScriptCard(script) {
+    const appConfig = getAppConfig(script.application);
+    const priceDisplay = script.price_type === 'free'
+        ? '<span class="text-green-600 font-semibold">FREE</span>'
+        : `<span class="text-primary font-semibold">$${parseFloat(script.price).toFixed(2)}</span>`;
+
+    const thumbnail = script.thumbnail
+        ? `<img src="uploads/images/${script.thumbnail}" alt="${script.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">`
+        : `<i class="${appConfig.icon} ${appConfig.textColor} text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>`;
+
+    const thumbnailBg = script.thumbnail ? '' : `bg-gradient-to-br ${appConfig.gradient}`;
+
+    return `
+        <a href="script-detail.html?slug=${script.slug}" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
+            <div class="aspect-video ${thumbnailBg} flex items-center justify-center overflow-hidden">
+                ${thumbnail}
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${appConfig.badgeBg} ${appConfig.textColor}">
+                        <i class="${appConfig.icon} mr-1"></i> ${script.application}
+                    </span>
+                    ${priceDisplay}
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">${escapeHtml(script.name)}</h3>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${escapeHtml(script.short_description)}</p>
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                    <span><i class="fas fa-download mr-1"></i> ${formatNumber(script.downloads || 0)} downloads</span>
+                    <span class="text-xs text-gray-400">v${script.version || '1.0.0'}</span>
+                </div>
+            </div>
+        </a>
+    `;
+}
+
+// Get app-specific configuration
+function getAppConfig(application) {
+    const configs = {
+        indesign: {
+            icon: 'fas fa-file-alt',
+            textColor: 'text-indesign',
+            badgeBg: 'bg-indesign/10',
+            gradient: 'from-indesign/20 to-indesign/5'
+        },
+        photoshop: {
+            icon: 'fas fa-image',
+            textColor: 'text-photoshop',
+            badgeBg: 'bg-photoshop/10',
+            gradient: 'from-photoshop/20 to-photoshop/5'
+        },
+        illustrator: {
+            icon: 'fas fa-pen-nib',
+            textColor: 'text-illustrator',
+            badgeBg: 'bg-illustrator/10',
+            gradient: 'from-illustrator/20 to-illustrator/5'
+        }
+    };
+
+    return configs[application.toLowerCase()] || configs.indesign;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Scripts page loader
+async function loadScriptsPage() {
+    const container = document.getElementById('scripts-grid');
+    if (!container) return;
+
+    // Show loading state
+    container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-500">Loading scripts...</p>
+        </div>
+    `;
+
+    try {
+        // Get filter parameters from URL
+        const params = new URLSearchParams(window.location.search);
+        let url = `${API_BASE}/scripts.php?action=public-list`;
+
+        if (params.get('app')) {
+            url += `&application=${params.get('app')}`;
+        }
+        if (params.get('price')) {
+            url += `&price_type=${params.get('price')}`;
+        }
+        if (params.get('sort')) {
+            url += `&sort=${params.get('sort')}`;
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success && data.scripts) {
+            renderScriptsGrid(data.scripts);
+            updateResultsCount();
+        } else {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">No scripts found. Try adjusting your filters.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading scripts:', error);
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-4"></i>
+                <p class="text-gray-500">Error loading scripts. Please try again later.</p>
+            </div>
+        `;
+    }
+}
+
+// Render scripts grid
+function renderScriptsGrid(scripts) {
+    const container = document.getElementById('scripts-grid');
+    if (!container) return;
+
+    if (scripts.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No scripts found. Try adjusting your filters.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = scripts.map(script => {
+        const appConfig = getAppConfig(script.application);
+        const priceDisplay = script.price_type === 'free'
+            ? '<span class="text-green-600 font-semibold">FREE</span>'
+            : `<span class="text-primary font-semibold">$${parseFloat(script.price).toFixed(2)}</span>`;
+
+        const thumbnail = script.thumbnail
+            ? `<img src="uploads/images/${script.thumbnail}" alt="${script.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">`
+            : `<i class="${appConfig.icon} ${appConfig.textColor} text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>`;
+
+        const thumbnailBg = script.thumbnail ? '' : `bg-gradient-to-br ${appConfig.gradient}`;
+
+        return `
+            <a href="script-detail.html?slug=${script.slug}"
+               class="script-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group"
+               data-app="${script.application.toLowerCase()}"
+               data-price="${script.price_type}"
+               data-price-value="${script.price || 0}"
+               data-downloads="${script.downloads || 0}"
+               data-name="${escapeHtml(script.name)}"
+               data-date="${new Date(script.created_at).getTime()}">
+                <div class="aspect-video ${thumbnailBg} flex items-center justify-center overflow-hidden">
+                    ${thumbnail}
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${appConfig.badgeBg} ${appConfig.textColor}">
+                            <i class="${appConfig.icon} mr-1"></i> ${script.application}
+                        </span>
+                        ${priceDisplay}
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary transition-colors">${escapeHtml(script.name)}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">${escapeHtml(script.short_description)}</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-download mr-1"></i> ${formatNumber(script.downloads || 0)}</span>
+                        <span class="text-xs text-gray-400">v${script.version || '1.0.0'}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+    }).join('');
+}
+
+// Script detail page loader
+async function loadScriptDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
+
+    if (!slug) {
+        showScriptNotFound();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/scripts.php?action=public-get&slug=${slug}`);
+        const data = await response.json();
+
+        if (data.success && data.script) {
+            renderScriptDetail(data.script);
+        } else {
+            showScriptNotFound();
+        }
+    } catch (error) {
+        console.error('Error loading script detail:', error);
+        showScriptNotFound();
+    }
+}
+
+// Render script detail
+function renderScriptDetail(script) {
+    // Update page title
+    document.title = `${script.name} - Adoscript`;
+
+    // Update meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+        metaDesc.content = script.short_description;
+    }
+
+    // Update script name
+    const nameEl = document.getElementById('script-name');
+    if (nameEl) nameEl.textContent = script.name;
+
+    // Update breadcrumb
+    const breadcrumbName = document.getElementById('breadcrumb-name');
+    if (breadcrumbName) breadcrumbName.textContent = script.name;
+
+    // Update short description
+    const shortDescEl = document.getElementById('script-short-desc');
+    if (shortDescEl) shortDescEl.textContent = script.short_description;
+
+    // Update app badge
+    const appConfig = getAppConfig(script.application);
+    const appBadge = document.getElementById('script-app-badge');
+    if (appBadge) {
+        appBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${appConfig.badgeBg} ${appConfig.textColor}`;
+        appBadge.innerHTML = `<i class="${appConfig.icon} mr-2"></i> ${script.application}`;
+    }
+
+    // Update version
+    const versionEl = document.getElementById('script-version');
+    if (versionEl) versionEl.textContent = `v${script.version || '1.0.0'}`;
+
+    // Update downloads
+    const downloadsEl = document.getElementById('script-downloads');
+    if (downloadsEl) downloadsEl.textContent = formatNumber(script.downloads || 0);
+
+    // Update price
+    const priceEl = document.getElementById('script-price');
+    if (priceEl) {
+        if (script.price_type === 'free') {
+            priceEl.textContent = 'FREE';
+            priceEl.className = 'text-3xl font-bold text-green-600';
+        } else {
+            priceEl.textContent = `$${parseFloat(script.price).toFixed(2)}`;
+            priceEl.className = 'text-3xl font-bold text-primary';
+        }
+    }
+
+    // Update download button
+    const downloadBtn = document.getElementById('download-btn');
+    if (downloadBtn) {
+        downloadBtn.dataset.scriptId = script.id;
+        downloadBtn.dataset.free = script.price_type === 'free' ? 'true' : 'false';
+        downloadBtn.dataset.slug = script.slug;
+
+        if (script.price_type === 'free') {
+            downloadBtn.innerHTML = '<i class="fas fa-download mr-2"></i> Download Free';
+            downloadBtn.onclick = () => downloadFreeScript(script.id);
+        } else {
+            downloadBtn.innerHTML = '<i class="fas fa-shopping-cart mr-2"></i> Buy Now';
+            downloadBtn.onclick = () => {
+                window.location.href = `checkout.html?slug=${script.slug}`;
+            };
+        }
+    }
+
+    // Update full description
+    const fullDescEl = document.getElementById('script-full-desc');
+    if (fullDescEl) fullDescEl.innerHTML = script.full_description || script.short_description;
+
+    // Update installation
+    const installEl = document.getElementById('script-installation');
+    if (installEl) installEl.innerHTML = script.installation_instructions || 'Installation instructions will be provided with download.';
+
+    // Update usage
+    const usageEl = document.getElementById('script-usage');
+    if (usageEl) usageEl.innerHTML = script.usage_instructions || 'Usage instructions will be provided with download.';
+
+    // Update requirements
+    const reqEl = document.getElementById('script-requirements');
+    if (reqEl) reqEl.textContent = script.system_requirements || 'Not specified';
+
+    // Update compatibility
+    const compatEl = document.getElementById('script-compatibility');
+    if (compatEl) compatEl.textContent = script.compatibility || 'Not specified';
+
+    // Update changelog
+    const changelogEl = document.getElementById('script-changelog');
+    if (changelogEl) changelogEl.innerHTML = script.changelog || 'No changelog available.';
+
+    // Update file info
+    const fileSizeEl = document.getElementById('script-file-size');
+    if (fileSizeEl) fileSizeEl.textContent = script.file_size || 'N/A';
+
+    // Update sidebar info
+    const appInfoEl = document.getElementById('script-app-info');
+    if (appInfoEl) appInfoEl.textContent = script.application;
+
+    const versionInfoEl = document.getElementById('script-version-info');
+    if (versionInfoEl) versionInfoEl.textContent = `v${script.version || '1.0.0'}`;
+
+    // Update images gallery
+    if (script.images && script.images.length > 0) {
+        renderImageGallery(script.images);
+    }
+
+    // Update videos if any
+    if (script.videos && script.videos.length > 0) {
+        renderVideoGallery(script.videos);
+    }
+}
+
+// Render image gallery
+function renderImageGallery(images) {
+    const mainImage = document.getElementById('main-image');
+    const thumbnails = document.getElementById('image-thumbnails');
+
+    if (mainImage && images.length > 0) {
+        mainImage.src = `uploads/images/${images[0].image_path}`;
+        mainImage.alt = 'Script screenshot';
+    }
+
+    if (thumbnails && images.length > 1) {
+        thumbnails.innerHTML = images.map((img, index) => `
+            <button class="w-20 h-20 rounded-lg overflow-hidden border-2 ${index === 0 ? 'border-primary' : 'border-transparent'} hover:border-primary transition-colors"
+                    onclick="switchImage('uploads/images/${img.image_path}', this)">
+                <img src="uploads/images/${img.image_path}" alt="Thumbnail ${index + 1}" class="w-full h-full object-cover">
+            </button>
+        `).join('');
+    }
+}
+
+// Switch main image
+function switchImage(src, button) {
+    const mainImage = document.getElementById('main-image');
+    if (mainImage) {
+        mainImage.src = src;
+    }
+
+    // Update thumbnail borders
+    const thumbnails = document.querySelectorAll('#image-thumbnails button');
+    thumbnails.forEach(btn => btn.classList.remove('border-primary'));
+    if (button) button.classList.add('border-primary');
+}
+
+// Render video gallery
+function renderVideoGallery(videos) {
+    const container = document.getElementById('video-gallery');
+    if (!container) return;
+
+    container.innerHTML = videos.map(video => {
+        // Convert YouTube URL to embed format if needed
+        let embedUrl = video.video_url;
+        if (embedUrl.includes('youtube.com/watch')) {
+            const videoId = new URL(embedUrl).searchParams.get('v');
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        } else if (embedUrl.includes('youtu.be/')) {
+            const videoId = embedUrl.split('youtu.be/')[1];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        return `
+            <div class="aspect-video rounded-lg overflow-hidden">
+                <iframe src="${embedUrl}" frameborder="0" allowfullscreen class="w-full h-full"></iframe>
+            </div>
+        `;
+    }).join('');
+}
+
+// Download free script
+async function downloadFreeScript(scriptId) {
+    try {
+        const response = await fetch(`${API_BASE}/scripts.php?action=download&id=${scriptId}`);
+        const data = await response.json();
+
+        if (data.success && data.download_url) {
+            showToast('Download started!', 'success');
+            window.location.href = data.download_url;
+        } else {
+            showToast(data.message || 'Download not available', 'error');
+        }
+    } catch (error) {
+        console.error('Download error:', error);
+        showToast('Error starting download', 'error');
+    }
+}
+
+// Show script not found
+function showScriptNotFound() {
+    const container = document.querySelector('main') || document.body;
+    container.innerHTML = `
+        <div class="max-w-2xl mx-auto px-4 py-20 text-center">
+            <i class="fas fa-search text-6xl text-gray-300 mb-6"></i>
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">Script Not Found</h1>
+            <p class="text-gray-600 mb-8">The script you're looking for doesn't exist or has been removed.</p>
+            <a href="scripts.html" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> Browse All Scripts
+            </a>
+        </div>
+    `;
+}
+
+// Expose switchImage globally
+window.switchImage = switchImage;
 
 // Mobile Menu
 function initMobileMenu() {
@@ -299,20 +828,7 @@ function initLightbox() {
 
 // Form handlers
 function initForms() {
-    // Download button handler
-    const downloadBtn = document.getElementById('download-btn');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', function(e) {
-            if (this.dataset.free === 'true') {
-                showToast('Download started!', 'success');
-                // In real implementation, trigger file download
-            } else {
-                // Show payment modal or redirect to checkout
-                window.location.href = 'checkout.html?script=' + this.dataset.scriptId;
-            }
-        });
-    }
-
+    // Download button is handled in renderScriptDetail()
     // Admin forms
     initAdminForms();
 }

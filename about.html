@@ -20,8 +20,8 @@
                         'indesign': '#FF3366',
                         'photoshop': '#31A8FF',
                         'illustrator': '#FF9A00',
-                        'primary': '#2563EB',
-                        'primary-dark': '#1D4ED8',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
                     }
                 }
             }
@@ -249,7 +249,7 @@
             </div>
 
             <div class="bg-gray-50 rounded-2xl p-8">
-                <form class="space-y-6">
+                <form id="contact-form" class="space-y-6">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Your Name</label>
@@ -278,8 +278,11 @@
                         <textarea id="message" name="message" rows="5" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="How can we help you?"></textarea>
                     </div>
 
+                    <!-- Success/Error Message -->
+                    <div id="form-message" class="hidden rounded-lg p-4 text-center"></div>
+
                     <div class="text-center">
-                        <button type="submit" class="inline-flex items-center px-8 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
+                        <button type="submit" id="submit-btn" class="inline-flex items-center px-8 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
                             <i class="fas fa-paper-plane mr-2"></i>
                             Send Message
                         </button>
@@ -386,6 +389,56 @@
                 icon.style.transform = 'rotate(0deg)';
             }
         }
+
+        // Contact Form Handler
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = this;
+            const submitBtn = document.getElementById('submit-btn');
+            const messageDiv = document.getElementById('form-message');
+            
+            // Get form data
+            const formData = new FormData(form);
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+            messageDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('api/contact.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    messageDiv.className = 'rounded-lg p-4 text-center bg-green-100 text-green-800';
+                    messageDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>' + result.message;
+                    messageDiv.classList.remove('hidden');
+                    
+                    // Reset form
+                    form.reset();
+                } else {
+                    // Show error message
+                    messageDiv.className = 'rounded-lg p-4 text-center bg-red-100 text-red-800';
+                    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>' + (result.error || 'Failed to send message');
+                    messageDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                // Show error message
+                messageDiv.className = 'rounded-lg p-4 text-center bg-red-100 text-red-800';
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i> Network error. Please try again.';
+                messageDiv.classList.remove('hidden');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Send Message';
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Admin Panel</title>
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen pb-20 md:pb-0">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="flex items-center justify-between px-6 h-16">
+            <a href="dashboard.html" class="flex items-center space-x-2">
+                <img src="../assets/Horizontal_pos.svg" alt="Adoscript" class="h-10">
+                <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Admin</span>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <a href="../index.html" target="_blank" class="text-gray-600 hover:text-primary transition-colors" title="View Site">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                <a href="login.html" onclick="logout()" class="text-gray-600 hover:text-red-500 transition-colors" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar bg-white shadow-sm p-4 hidden md:block">
+            <nav class="space-y-1">
+                <a href="dashboard.html" class="admin-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="scripts.html" class="admin-nav-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>All Scripts</span>
+                </a>
+                <a href="quick-upload.html" class="admin-nav-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Quick Upload (AI)</span>
+                </a>
+                <a href="upload.html" class="admin-nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Manual Upload</span>
+                </a>
+                <a href="orders.html" class="admin-nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="settings.html" class="admin-nav-item active">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+                <p class="text-gray-600">Manage your admin account settings</p>
+            </div>
+
+            <div class="max-w-2xl space-y-6">
+                <!-- Change Password -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-lock mr-2 text-primary"></i>
+                        Change Password
+                    </h2>
+
+                    <form id="password-form" class="space-y-4">
+                        <div>
+                            <label for="current-password" class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                            <input type="password" id="current-password" name="current_password" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                   placeholder="Enter current password">
+                        </div>
+
+                        <div>
+                            <label for="new-password" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                            <input type="password" id="new-password" name="new_password" required minlength="8"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                   placeholder="Enter new password (min 8 characters)">
+                        </div>
+
+                        <div>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                            <input type="password" id="confirm-password" name="confirm_password" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                   placeholder="Confirm new password">
+                        </div>
+
+                        <div id="password-error" class="hidden p-3 bg-red-50 text-red-700 rounded-lg text-sm"></div>
+                        <div id="password-success" class="hidden p-3 bg-green-50 text-green-700 rounded-lg text-sm"></div>
+
+                        <button type="submit" id="password-btn" class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="fas fa-save mr-2"></i>
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Site Settings -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-globe mr-2 text-primary"></i>
+                        Site Information
+                    </h2>
+
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Site Name</span>
+                            <span class="font-medium">Adoscript</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Site URL</span>
+                            <span class="font-medium">https://adoscript.com</span>
+                        </div>
+                        <div class="flex justify-between py-2">
+                            <span class="text-gray-600">PayPal Mode</span>
+                            <span id="paypal-mode" class="font-medium">-</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        To change site settings, edit <code class="bg-gray-100 px-1 rounded">api/config.php</code>
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2">
+        <a href="dashboard.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="scripts.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-file-code text-xl"></i>
+            <span class="text-xs mt-1">Scripts</span>
+        </a>
+        <a href="upload.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-upload text-xl"></i>
+            <span class="text-xs mt-1">Upload</span>
+        </a>
+        <a href="settings.html" class="flex flex-col items-center py-2 px-4 text-primary">
+            <i class="fas fa-cog text-xl"></i>
+            <span class="text-xs mt-1">Settings</span>
+        </a>
+    </nav>
+
+    <script src="../js/admin.js"></script>
+    <script>
+        // Load PayPal mode on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const paypalResponse = await fetch(`${API_BASE}/paypal.php?action=get-client-id`);
+                const paypalResult = await paypalResponse.json();
+                if (paypalResult.success) {
+                    const modeEl = document.getElementById('paypal-mode');
+                    modeEl.textContent = paypalResult.mode === 'live' ? 'Live' : 'Sandbox';
+                    modeEl.className = paypalResult.mode === 'live'
+                        ? 'font-medium text-green-600'
+                        : 'font-medium text-yellow-600';
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        });
+
+        function showPasswordError(message) {
+            const errorEl = document.getElementById('password-error');
+            const successEl = document.getElementById('password-success');
+            successEl.classList.add('hidden');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        function showPasswordSuccess(message) {
+            const errorEl = document.getElementById('password-error');
+            const successEl = document.getElementById('password-success');
+            errorEl.classList.add('hidden');
+            successEl.textContent = message;
+            successEl.classList.remove('hidden');
+        }
+
+        // Change password form
+        document.getElementById('password-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Hide previous messages
+            document.getElementById('password-error').classList.add('hidden');
+            document.getElementById('password-success').classList.add('hidden');
+
+            if (newPassword !== confirmPassword) {
+                showPasswordError('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showPasswordError('Password must be at least 8 characters');
+                return;
+            }
+
+            const btn = document.getElementById('password-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth.php?action=change-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                const result = await response.json();
+                console.log('Response data:', result);
+
+                if (result.success) {
+                    showPasswordSuccess('Password updated successfully! Please use your new password on next login.');
+                    document.getElementById('password-form').reset();
+                } else {
+                    showPasswordError(result.error || 'Failed to update password');
+                }
+            } catch (error) {
+                console.error('Password change error:', error);
+                showPasswordError('Failed to update password. Check console for details.');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save mr-2"></i>Update Password';
+        });
+    </script>
+</body>
+</html>

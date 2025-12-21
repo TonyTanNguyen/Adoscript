@@ -9,7 +9,9 @@ const API_BASE = '../api';
 // Check authentication on page load
 async function checkAuth() {
     try {
-        const response = await fetch(`${API_BASE}/auth.php?action=check`);
+        const response = await fetch(`${API_BASE}/auth.php?action=check`, {
+            credentials: 'same-origin'
+        });
         const data = await response.json();
 
         if (!data.authenticated) {
@@ -34,7 +36,9 @@ async function checkAuth() {
 // Logout function
 async function logout() {
     try {
-        await fetch(`${API_BASE}/auth.php?action=logout`);
+        await fetch(`${API_BASE}/auth.php?action=logout`, {
+            credentials: 'same-origin'
+        });
     } catch (error) {
         console.error('Logout error:', error);
     }
@@ -113,6 +117,7 @@ async function uploadFile(file, type = 'script') {
 
     const response = await fetch(`${API_BASE}/upload.php?action=${type}`, {
         method: 'POST',
+        credentials: 'same-origin',
         body: formData
     });
 
@@ -128,6 +133,7 @@ async function uploadImages(files) {
 
     const response = await fetch(`${API_BASE}/upload.php?action=images`, {
         method: 'POST',
+        credentials: 'same-origin',
         body: formData
     });
 
@@ -137,14 +143,31 @@ async function uploadImages(files) {
 // Fetch scripts from API
 async function fetchScripts(params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    const response = await fetch(`${API_BASE}/scripts.php?action=list&${queryString}`);
+    const response = await fetch(`${API_BASE}/scripts.php?action=list&${queryString}`, {
+        credentials: 'same-origin'
+    });
     return await response.json();
 }
 
 // Fetch single script
 async function fetchScript(id) {
-    const response = await fetch(`${API_BASE}/scripts.php?action=get&id=${id}`);
-    return await response.json();
+    try {
+        const response = await fetch(`${API_BASE}/scripts.php?action=get&id=${id}`, {
+            credentials: 'same-origin'
+        });
+        const data = await response.json();
+
+        // If auth failed, include status info
+        if (!response.ok) {
+            console.error('Fetch script failed:', response.status, data);
+            return { success: false, error: data.error || `HTTP ${response.status}`, redirect: data.redirect };
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Fetch script error:', error);
+        return { success: false, error: error.message };
+    }
 }
 
 // Create script
@@ -154,6 +177,7 @@ async function createScript(data) {
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'same-origin',
         body: JSON.stringify(data)
     });
     return await response.json();
@@ -166,6 +190,7 @@ async function updateScript(id, data) {
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'same-origin',
         body: JSON.stringify(data)
     });
     return await response.json();
@@ -174,7 +199,8 @@ async function updateScript(id, data) {
 // Delete script
 async function deleteScript(id) {
     const response = await fetch(`${API_BASE}/scripts.php?action=delete&id=${id}`, {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'same-origin'
     });
     return await response.json();
 }
@@ -182,33 +208,42 @@ async function deleteScript(id) {
 // Toggle script status
 async function toggleScriptStatus(id) {
     const response = await fetch(`${API_BASE}/scripts.php?action=toggle-status&id=${id}`, {
-        method: 'POST'
+        method: 'POST',
+        credentials: 'same-origin'
     });
     return await response.json();
 }
 
 // Fetch dashboard stats
 async function fetchStats() {
-    const response = await fetch(`${API_BASE}/scripts.php?action=stats`);
+    const response = await fetch(`${API_BASE}/scripts.php?action=stats`, {
+        credentials: 'same-origin'
+    });
     return await response.json();
 }
 
 // Fetch orders
 async function fetchOrders(params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    const response = await fetch(`${API_BASE}/orders.php?action=list&${queryString}`);
+    const response = await fetch(`${API_BASE}/orders.php?action=list&${queryString}`, {
+        credentials: 'same-origin'
+    });
     return await response.json();
 }
 
 // Fetch single order
 async function fetchOrder(id) {
-    const response = await fetch(`${API_BASE}/orders.php?action=get&id=${id}`);
+    const response = await fetch(`${API_BASE}/orders.php?action=get&id=${id}`, {
+        credentials: 'same-origin'
+    });
     return await response.json();
 }
 
 // Fetch order stats
 async function fetchOrderStats() {
-    const response = await fetch(`${API_BASE}/orders.php?action=stats`);
+    const response = await fetch(`${API_BASE}/orders.php?action=stats`, {
+        credentials: 'same-origin'
+    });
     return await response.json();
 }
 

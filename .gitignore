@@ -17,3 +17,6 @@ Thumbs.db
 
 # Database (don't commit actual data)
 data/*.db
+
+# API keys (keep secret!)
+api/api-keys.php

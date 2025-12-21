@@ -55,6 +55,11 @@ function formatFileSize($bytes) {
     return $bytes . ' bytes';
 }
 
+// Alias for formatFileSize
+function formatBytes($bytes) {
+    return formatFileSize($bytes);
+}
+
 /**
  * Get file extension
  */
@@ -117,7 +122,7 @@ function getAppColor($app) {
         'photoshop' => '#31A8FF',
         'illustrator' => '#FF9A00'
     ];
-    return $colors[$app] ?? '#2563EB';
+    return $colors[$app] ?? '#7f22ea';
 }
 
 /**

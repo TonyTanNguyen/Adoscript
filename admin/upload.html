@@ -18,8 +18,8 @@
                         'indesign': '#FF3366',
                         'photoshop': '#31A8FF',
                         'illustrator': '#FF9A00',
-                        'primary': '#2563EB',
-                        'primary-dark': '#1D4ED8',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
                     }
                 }
             }
@@ -72,13 +72,21 @@
                     <i class="fas fa-file-code"></i>
                     <span>All Scripts</span>
                 </a>
+                <a href="quick-upload.html" class="admin-nav-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Quick Upload (AI)</span>
+                </a>
                 <a href="upload.html" class="admin-nav-item active">
                     <i class="fas fa-upload"></i>
-                    <span>Upload Script</span>
+                    <span>Manual Upload</span>
                 </a>
                 <a href="orders.html" class="admin-nav-item">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Orders</span>
+                </a>
+                <a href="settings.html" class="admin-nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
                 </a>
             </nav>
         </aside>
@@ -86,8 +94,8 @@
         <!-- Main Content -->
         <main class="flex-1 p-6">
             <div class="mb-8">
-                <h1 class="text-2xl font-bold text-gray-900">Upload New Script</h1>
-                <p class="text-gray-600">Add a new script to the marketplace</p>
+                <h1 id="page-title" class="text-2xl font-bold text-gray-900">Upload New Script</h1>
+                <p id="page-subtitle" class="text-gray-600">Add a new script to the marketplace</p>
             </div>
 
             <form id="upload-form" class="space-y-6">
@@ -159,7 +167,7 @@
 
                 <!-- Script File Upload -->
                 <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Script File</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Script File <span class="text-red-500">*</span></h2>
 
                     <div class="upload-zone cursor-pointer" onclick="document.getElementById('script-file').click()">
                         <input type="file" id="script-file" name="script_file" accept=".jsx,.jsxbin,.zip" class="hidden">
@@ -325,9 +333,9 @@
                         <i class="fas fa-eye mr-2"></i>
                         Preview
                     </button>
-                    <button type="submit" class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors">
+                    <button type="submit" id="submit-btn" class="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors">
                         <i class="fas fa-check mr-2"></i>
-                        Publish Script
+                        <span id="submit-btn-text">Publish Script</span>
                     </button>
                 </div>
             </form>
@@ -354,12 +362,182 @@
         </a>
     </nav>
 
-    <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>
     <script>
         // Store uploaded file paths
         let uploadedScriptFile = null;
         let uploadedImages = [];
+
+        // Edit mode variables
+        let isEditMode = false;
+        let editScriptId = null;
+
+        // Check for edit mode on page load
+        async function initPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (id) {
+                isEditMode = true;
+                editScriptId = parseInt(id);
+                await loadScriptForEdit(id);
+            }
+        }
+
+        // Load script data for editing
+        async function loadScriptForEdit(id) {
+            try {
+                // Update page title
+                document.getElementById('page-title').textContent = 'Edit Script';
+                document.getElementById('page-subtitle').textContent = 'Update script details';
+                document.getElementById('submit-btn-text').textContent = 'Update Script';
+                document.title = 'Edit Script - Admin Panel';
+
+                // Show loading state
+                const form = document.getElementById('upload-form');
+                form.style.opacity = '0.5';
+                form.style.pointerEvents = 'none';
+
+                const result = await fetchScript(id);
+                console.log('Fetch script result:', result);
+
+                // Handle auth redirect
+                if (result.redirect) {
+                    window.location.href = result.redirect;
+                    return;
+                }
+
+                if (!result.success) {
+                    showToast(result.error || 'Failed to load script', 'error');
+                    form.style.opacity = '1';
+                    form.style.pointerEvents = 'auto';
+                    return;
+                }
+
+                if (!result.script) {
+                    showToast('Script not found', 'error');
+                    window.location.href = 'scripts.html';
+                    return;
+                }
+
+                const script = result.script;
+
+                // Populate form fields
+                document.getElementById('script-name').value = script.name || '';
+                document.getElementById('application').value = (script.application || '').toLowerCase();
+                document.getElementById('version').value = script.version || '1.0.0';
+                document.getElementById('short-description').value = script.short_description || '';
+                document.getElementById('char-count').textContent = (script.short_description || '').length;
+
+                // Price type
+                const priceType = script.price_type || 'free';
+                document.querySelector(`input[name="price_type"][value="${priceType}"]`).checked = true;
+                if (priceType === 'paid') {
+                    document.getElementById('price-input-container').classList.remove('hidden');
+                    document.getElementById('price').value = script.price || 0;
+                }
+
+                // Rich text editors
+                document.getElementById('full-description').innerHTML = script.full_description || '<p>Enter your full script description here...</p>';
+                document.getElementById('installation-instructions').innerHTML = script.installation_instructions || '<p>Enter installation instructions here...</p>';
+                document.getElementById('usage-instructions').innerHTML = script.usage_instructions || '<p>Enter usage instructions here...</p>';
+
+                // Additional fields
+                document.getElementById('system-requirements').value = script.system_requirements || '';
+                document.getElementById('compatibility').value = script.compatibility || '';
+                document.getElementById('tags').value = script.tags || '';
+                document.getElementById('changelog').value = script.changelog || '';
+
+                // Handle existing script file
+                if (script.file_path) {
+                    uploadedScriptFile = {
+                        file_path: script.file_path,
+                        file_size: script.file_size || 'Unknown'
+                    };
+                    const preview = document.querySelector('#script-file').parentElement.querySelector('.upload-preview');
+                    preview.innerHTML = `
+                        <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <i class="fas fa-file-code text-primary text-xl"></i>
+                                <div>
+                                    <div class="font-medium">${script.file_path}</div>
+                                    <div class="text-sm text-gray-500">${script.file_size || 'Existing file'}</div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="removeScriptFile()" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                // Handle existing images
+                if (script.images && script.images.length > 0) {
+                    uploadedImages = script.images.map(img => ({
+                        image_path: img.image_path,
+                        url: 'uploads/images/' + img.image_path
+                    }));
+                    const imagePreview = document.getElementById('images').parentElement.querySelector('.upload-preview');
+                    renderImagePreviews(imagePreview);
+                }
+
+                // Handle existing videos
+                if (script.videos && script.videos.length > 0) {
+                    const videoContainer = document.getElementById('video-urls');
+                    // Clear default video input
+                    videoContainer.innerHTML = '';
+
+                    script.videos.forEach((video, index) => {
+                        const videoDiv = document.createElement('div');
+                        videoDiv.className = 'flex gap-4';
+                        videoDiv.innerHTML = `
+                            <input type="url" name="video_url[]" value="${video.video_url || ''}"
+                                   class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                   placeholder="YouTube or Vimeo URL">
+                            ${index === 0 ?
+                                `<button type="button" onclick="addVideoUrl()" class="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                    <i class="fas fa-plus"></i>
+                                </button>` :
+                                `<button type="button" onclick="this.parentElement.remove()" class="px-4 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
+                                    <i class="fas fa-times"></i>
+                                </button>`
+                            }
+                        `;
+                        videoContainer.appendChild(videoDiv);
+                    });
+
+                    // Add empty input if no videos
+                    if (script.videos.length === 0) {
+                        addDefaultVideoInput();
+                    }
+                }
+
+                // Re-enable form
+                form.style.opacity = '1';
+                form.style.pointerEvents = 'auto';
+
+            } catch (error) {
+                console.error('Error loading script:', error);
+                showToast('Failed to load script', 'error');
+            }
+        }
+
+        function addDefaultVideoInput() {
+            const videoContainer = document.getElementById('video-urls');
+            videoContainer.innerHTML = `
+                <div class="flex gap-4">
+                    <input type="url" name="video_url[]"
+                           class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                           placeholder="YouTube or Vimeo URL">
+                    <button type="button" onclick="addVideoUrl()" class="px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', initPage);
 
         // Character counter
         const shortDesc = document.getElementById('short-description');
@@ -491,9 +669,22 @@
         document.getElementById('upload-form').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // Validate script file is uploaded
+            if (!uploadedScriptFile) {
+                showToast('Please upload a script file before publishing', 'error');
+                // Highlight the upload zone
+                const uploadZone = document.getElementById('script-file').closest('.upload-zone');
+                uploadZone.classList.add('border-red-500', 'border-2');
+                uploadZone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => uploadZone.classList.remove('border-red-500', 'border-2'), 3000);
+                return;
+            }
+
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+            submitBtn.innerHTML = isEditMode
+                ? '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...'
+                : '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
 
             // Collect form data
             const data = {
@@ -520,21 +711,31 @@
             };
 
             try {
-                const result = await createScript(data);
+                let result;
+                if (isEditMode) {
+                    result = await updateScript(editScriptId, data);
+                } else {
+                    result = await createScript(data);
+                }
+
                 if (result.success) {
-                    showToast('Script published successfully!');
+                    showToast(isEditMode ? 'Script updated successfully!' : 'Script published successfully!');
                     setTimeout(() => {
                         window.location.href = 'scripts.html';
                     }, 1500);
                 } else {
-                    showToast(result.error || 'Failed to publish script', 'error');
+                    showToast(result.error || (isEditMode ? 'Failed to update script' : 'Failed to publish script'), 'error');
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Publish Script';
+                    submitBtn.innerHTML = isEditMode
+                        ? '<i class="fas fa-check mr-2"></i><span>Update Script</span>'
+                        : '<i class="fas fa-check mr-2"></i><span>Publish Script</span>';
                 }
             } catch (error) {
-                showToast('Failed to publish script', 'error');
+                showToast(isEditMode ? 'Failed to update script' : 'Failed to publish script', 'error');
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>Publish Script';
+                submitBtn.innerHTML = isEditMode
+                    ? '<i class="fas fa-check mr-2"></i><span>Update Script</span>'
+                    : '<i class="fas fa-check mr-2"></i><span>Publish Script</span>';
             }
         });
 
@@ -567,7 +768,13 @@
             };
 
             try {
-                const result = await createScript(data);
+                let result;
+                if (isEditMode) {
+                    result = await updateScript(editScriptId, data);
+                } else {
+                    result = await createScript(data);
+                }
+
                 if (result.success) {
                     showToast('Draft saved successfully!');
                     this.disabled = false;

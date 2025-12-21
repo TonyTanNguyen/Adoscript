@@ -12,6 +12,15 @@ require_once __DIR__ . '/../includes/auth-check.php';
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
+    // Public endpoints
+    case 'verify-download':
+        verifyDownload();
+        break;
+    case 'download':
+        downloadPaidScript();
+        break;
+
+    // Admin endpoints (require auth)
     case 'list':
         requireAuthApi();
         getOrders();
@@ -30,6 +39,139 @@ switch ($action) {
         break;
     default:
         errorResponse('Invalid action', 400);
+}
+
+/**
+ * Verify download token and get order details (public)
+ */
+function verifyDownload() {
+    $token = $_GET['token'] ?? '';
+
+    if (empty($token)) {
+        errorResponse('Download token is required');
+    }
+
+    try {
+        $db = getDB();
+
+        // Get order by token
+        $stmt = $db->prepare("
+            SELECT o.*, s.name, s.slug, s.application, s.file_path, s.file_size
+            FROM orders o
+            JOIN scripts s ON o.script_id = s.id
+            WHERE o.download_token = ?
+            AND o.status = 'completed'
+        ");
+        $stmt->execute([$token]);
+        $result = $stmt->fetch();
+
+        if (!$result) {
+            errorResponse('Invalid or expired download link', 404);
+        }
+
+        // Check if token expired
+        if ($result['token_expires_at'] && strtotime($result['token_expires_at']) < time()) {
+            errorResponse('Download link has expired', 410);
+        }
+
+        successResponse([
+            'order' => [
+                'id' => $result['id'],
+                'payment_id' => $result['payment_id'],
+                'customer_email' => $result['customer_email'],
+                'amount' => $result['amount'],
+                'status' => $result['status'],
+                'token_expires_at' => $result['token_expires_at'],
+                'download_count' => $result['download_count']
+            ],
+            'script' => [
+                'name' => $result['name'],
+                'slug' => $result['slug'],
+                'application' => $result['application'],
+                'file_size' => $result['file_size']
+            ]
+        ]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Download paid script file (public)
+ */
+function downloadPaidScript() {
+    $token = $_GET['token'] ?? '';
+
+    if (empty($token)) {
+        errorResponse('Download token is required');
+    }
+
+    try {
+        $db = getDB();
+
+        // Get order by token
+        $stmt = $db->prepare("
+            SELECT o.*, s.file_path, s.name
+            FROM orders o
+            JOIN scripts s ON o.script_id = s.id
+            WHERE o.download_token = ?
+            AND o.status = 'completed'
+        ");
+        $stmt->execute([$token]);
+        $order = $stmt->fetch();
+
+        if (!$order) {
+            header('Content-Type: text/html');
+            echo '<h1>Download Not Found</h1><p>Invalid or expired download link.</p>';
+            echo '<a href="scripts.html">Browse Scripts</a>';
+            exit;
+        }
+
+        // Check if token expired
+        if ($order['token_expires_at'] && strtotime($order['token_expires_at']) < time()) {
+            header('Content-Type: text/html');
+            echo '<h1>Download Expired</h1><p>This download link has expired.</p>';
+            echo '<a href="scripts.html">Browse Scripts</a>';
+            exit;
+        }
+
+        // Check if file exists
+        $filePath = SCRIPTS_PATH . $order['file_path'];
+        if (empty($order['file_path']) || !file_exists($filePath)) {
+            header('Content-Type: text/html');
+            echo '<h1>File Not Found</h1><p>The script file is not available.</p>';
+            echo '<a href="scripts.html">Browse Scripts</a>';
+            exit;
+        }
+
+        // Update download count
+        $stmt = $db->prepare("UPDATE orders SET download_count = download_count + 1 WHERE id = ?");
+        $stmt->execute([$order['id']]);
+
+        // Also update script download count
+        $stmt = $db->prepare("UPDATE scripts SET downloads = downloads + 1 WHERE id = ?");
+        $stmt->execute([$order['script_id']]);
+
+        // Send file
+        $filename = basename($order['file_path']);
+        $filesize = filesize($filePath);
+
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . $filesize);
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        readfile($filePath);
+        exit;
+
+    } catch (PDOException $e) {
+        error_log('Download error: ' . $e->getMessage());
+        header('Content-Type: text/html');
+        echo '<h1>Error</h1><p>An error occurred. Please try again.</p>';
+        exit;
+    }
 }
 
 /**

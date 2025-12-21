@@ -20,8 +20,14 @@ switch ($action) {
     case 'check':
         checkAuth();
         break;
+    case 'me':
+        getCurrentUser();
+        break;
     case 'change-password':
         changePassword();
+        break;
+    case 'update-account':
+        updateAccount();
         break;
     default:
         errorResponse('Invalid action', 400);
@@ -155,10 +161,96 @@ function changePassword() {
         }
 
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $stmt = $db->prepare("UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
         $stmt->execute([$hashedPassword, $_SESSION['user_id']]);
 
+        if ($stmt->rowCount() === 0) {
+            errorResponse('Failed to update password. Please try again.');
+        }
+
         successResponse([], 'Password changed successfully');
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Get current user info
+ */
+function getCurrentUser() {
+    if (!isLoggedIn()) {
+        errorResponse('Not authenticated', 401);
+    }
+
+    try {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT id, email, name, role FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            errorResponse('User not found', 404);
+        }
+
+        successResponse([
+            'user' => [
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'name' => $user['name'],
+                'role' => $user['role']
+            ]
+        ]);
+
+    } catch (PDOException $e) {
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
+}
+
+/**
+ * Update account info
+ */
+function updateAccount() {
+    if (!isLoggedIn()) {
+        errorResponse('Not authenticated', 401);
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        errorResponse('Method not allowed', 405);
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $email = filter_var($input['email'] ?? '', FILTER_VALIDATE_EMAIL);
+    $name = trim($input['name'] ?? '');
+
+    if (!$email) {
+        errorResponse('Valid email is required');
+    }
+
+    try {
+        $db = getDB();
+
+        // Check if email is already used by another user
+        $stmt = $db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$email, $_SESSION['user_id']]);
+        if ($stmt->fetch()) {
+            errorResponse('Email is already in use');
+        }
+
+        // Update user
+        $stmt = $db->prepare("UPDATE users SET email = ?, name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([$email, $name, $_SESSION['user_id']]);
+
+        // Update session
+        $_SESSION['user_email'] = $email;
+        $_SESSION['user_name'] = $name;
+
+        successResponse([
+            'user' => [
+                'email' => $email,
+                'name' => $name
+            ]
+        ], 'Account updated successfully');
 
     } catch (PDOException $e) {
         errorResponse('Database error: ' . $e->getMessage(), 500);

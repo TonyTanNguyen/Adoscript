@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Upload - Admin Panel</title>
+
+    <!-- Prevent indexing during development - REMOVE WHEN READY TO LAUNCH -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #2563EB;
+            background-color: #eff6ff;
+        }
+        .step-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .step-indicator.active {
+            background-color: #2563EB;
+            color: white;
+        }
+        .step-indicator.completed {
+            background-color: #22c55e;
+            color: white;
+        }
+        .step-indicator.pending {
+            background-color: #e5e7eb;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="dashboard.html" class="flex items-center">
+                        <img src="../assets/Horizontal_pos.svg" alt="Adoscript" class="h-8">
+                    </a>
+                    <span class="ml-4 text-gray-400">|</span>
+                    <span class="ml-4 text-gray-600 font-medium">Quick Upload</span>
+                </div>
+                <nav class="flex items-center space-x-4">
+                    <a href="dashboard.html" class="text-gray-600 hover:text-primary">Dashboard</a>
+                    <a href="scripts.html" class="text-gray-600 hover:text-primary">Scripts</a>
+                    <a href="upload.html" class="text-gray-600 hover:text-primary">Manual Upload</a>
+                    <a href="settings.html" class="text-gray-600 hover:text-primary">Settings</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Page Title -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">Quick Upload with AI</h1>
+            <p class="text-gray-600">Upload a script file and let AI automatically generate the title, description, and other details.</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="flex items-center justify-center mb-8">
+            <div class="flex items-center">
+                <div id="step1-indicator" class="step-indicator active">1</div>
+                <span class="ml-2 text-sm font-medium text-gray-900">Upload</span>
+            </div>
+            <div class="w-16 h-0.5 bg-gray-300 mx-4"></div>
+            <div class="flex items-center">
+                <div id="step2-indicator" class="step-indicator pending">2</div>
+                <span class="ml-2 text-sm font-medium text-gray-500">Review</span>
+            </div>
+            <div class="w-16 h-0.5 bg-gray-300 mx-4"></div>
+            <div class="flex items-center">
+                <div id="step3-indicator" class="step-indicator pending">3</div>
+                <span class="ml-2 text-sm font-medium text-gray-500">Publish</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Upload -->
+        <div id="step1" class="bg-white rounded-xl shadow-sm p-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Step 1: Upload Your Script</h2>
+
+            <!-- File Upload Zone -->
+            <div id="upload-zone" class="upload-zone rounded-xl p-12 text-center cursor-pointer mb-6">
+                <input type="file" id="script-file" accept=".js,.jsx" class="hidden">
+                <div id="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-600 mb-2">Drag and drop your script file here, or click to browse</p>
+                    <p class="text-sm text-gray-400">Supports .js and .jsx files</p>
+                </div>
+                <div id="file-selected" class="hidden">
+                    <i class="fas fa-file-code text-5xl text-primary mb-4"></i>
+                    <p id="selected-filename" class="text-gray-900 font-medium mb-2"></p>
+                    <p id="selected-filesize" class="text-sm text-gray-500 mb-4"></p>
+                    <button type="button" id="remove-file" class="text-red-500 hover:text-red-600 text-sm">
+                        <i class="fas fa-times mr-1"></i> Remove
+                    </button>
+                </div>
+            </div>
+
+            <!-- Application Selection -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Target Application</label>
+                <div class="grid grid-cols-3 gap-4">
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="application" value="InDesign" class="peer sr-only" checked>
+                        <div class="p-4 border-2 rounded-lg text-center peer-checked:border-indesign peer-checked:bg-indesign/5 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-file-alt text-2xl text-indesign mb-2"></i>
+                            <p class="font-medium text-gray-900">InDesign</p>
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="application" value="Photoshop" class="peer sr-only">
+                        <div class="p-4 border-2 rounded-lg text-center peer-checked:border-photoshop peer-checked:bg-photoshop/5 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-image text-2xl text-photoshop mb-2"></i>
+                            <p class="font-medium text-gray-900">Photoshop</p>
+                        </div>
+                    </label>
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="application" value="Illustrator" class="peer sr-only">
+                        <div class="p-4 border-2 rounded-lg text-center peer-checked:border-illustrator peer-checked:bg-illustrator/5 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-pen-nib text-2xl text-illustrator mb-2"></i>
+                            <p class="font-medium text-gray-900">Illustrator</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="button" id="generate-btn" class="w-full py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <i class="fas fa-magic mr-2"></i>
+                Analyze & Generate Details
+            </button>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="hidden text-center py-8">
+                <div class="inline-flex items-center px-6 py-3 bg-primary/10 rounded-full">
+                    <i class="fas fa-spinner fa-spin text-primary text-xl mr-3"></i>
+                    <span class="text-primary font-medium">Analyzing script with AI...</span>
+                </div>
+                <p class="text-gray-500 text-sm mt-4">This may take a few seconds</p>
+            </div>
+        </div>
+
+        <!-- Step 2: Review (Hidden initially) -->
+        <div id="step2" class="bg-white rounded-xl shadow-sm p-8 hidden">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Step 2: Review Generated Details</h2>
+            <p class="text-gray-600 mb-6">Review the AI-generated details below. You can edit any field before publishing.</p>
+
+            <form id="review-form" class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Script Title</label>
+                    <input type="text" id="gen-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+
+                <!-- Short Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
+                    <textarea id="gen-short-desc" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                </div>
+
+                <!-- Full Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Full Description</label>
+                    <textarea id="gen-full-desc" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                </div>
+
+                <!-- Installation Instructions -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Installation Instructions</label>
+                    <textarea id="gen-installation" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                </div>
+
+                <!-- Usage Instructions -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usage Instructions</label>
+                    <textarea id="gen-usage" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"></textarea>
+                </div>
+
+                <!-- System Requirements -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">System Requirements</label>
+                    <input type="text" id="gen-requirements" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+
+                <!-- Version -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Version</label>
+                        <input type="text" id="gen-version" value="1.0.0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Compatibility</label>
+                        <input type="text" id="gen-compatibility" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Price Type -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Price Type</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="price_type" value="free" class="mr-2" checked>
+                            <span class="text-gray-700">Free</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="price_type" value="paid" class="mr-2">
+                            <span class="text-gray-700">Paid</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Price Input (hidden by default) -->
+                <div id="price-input" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Price (USD)</label>
+                    <input type="number" id="gen-price" step="0.01" min="0" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" id="back-btn" class="flex-1 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button type="submit" id="publish-btn" class="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
+                        <i class="fas fa-rocket mr-2"></i> Publish Script
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: Success (Hidden initially) -->
+        <div id="step3" class="bg-white rounded-xl shadow-sm p-8 hidden text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl text-green-600"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Script Published!</h2>
+            <p class="text-gray-600 mb-6">Your script has been published successfully and is now live on the marketplace.</p>
+            <div class="flex justify-center space-x-4">
+                <a href="scripts.html" class="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                    View All Scripts
+                </a>
+                <button type="button" id="upload-another" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
+                    <i class="fas fa-plus mr-2"></i> Upload Another
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                <p id="error-text" class="text-red-700"></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // State
+        let selectedFile = null;
+        let generatedData = null;
+
+        // DOM Elements
+        const uploadZone = document.getElementById('upload-zone');
+        const scriptFileInput = document.getElementById('script-file');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const fileSelected = document.getElementById('file-selected');
+        const selectedFilename = document.getElementById('selected-filename');
+        const selectedFilesize = document.getElementById('selected-filesize');
+        const removeFileBtn = document.getElementById('remove-file');
+        const generateBtn = document.getElementById('generate-btn');
+        const loadingState = document.getElementById('loading-state');
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const reviewForm = document.getElementById('review-form');
+        const backBtn = document.getElementById('back-btn');
+        const uploadAnotherBtn = document.getElementById('upload-another');
+        const priceTypeRadios = document.querySelectorAll('input[name="price_type"]');
+        const priceInput = document.getElementById('price-input');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        // File upload handling
+        uploadZone.addEventListener('click', () => scriptFileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        scriptFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            // Validate file type
+            if (!file.name.endsWith('.js') && !file.name.endsWith('.jsx')) {
+                showError('Please select a .js or .jsx file');
+                return;
+            }
+
+            selectedFile = file;
+            uploadPlaceholder.classList.add('hidden');
+            fileSelected.classList.remove('hidden');
+            selectedFilename.textContent = file.name;
+            selectedFilesize.textContent = formatFileSize(file.size);
+            generateBtn.disabled = false;
+            hideError();
+        }
+
+        removeFileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            selectedFile = null;
+            scriptFileInput.value = '';
+            uploadPlaceholder.classList.remove('hidden');
+            fileSelected.classList.add('hidden');
+            generateBtn.disabled = true;
+        });
+
+        // Generate button
+        generateBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const application = document.querySelector('input[name="application"]:checked').value;
+
+            // Show loading state
+            generateBtn.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            hideError();
+
+            try {
+                // Read file content
+                const fileContent = await readFileContent(selectedFile);
+
+                // Call API to generate details
+                const formData = new FormData();
+                formData.append('action', 'auto-generate');
+                formData.append('script_file', selectedFile);
+                formData.append('application', application);
+                formData.append('code_content', fileContent);
+
+                const response = await fetch('../api/scripts.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    generatedData = data.generated;
+                    populateForm(data.generated);
+                    goToStep(2);
+                } else {
+                    showError(data.message || 'Failed to generate details');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred while processing the file');
+            } finally {
+                generateBtn.classList.remove('hidden');
+                loadingState.classList.add('hidden');
+            }
+        });
+
+        // Read file content
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsText(file);
+            });
+        }
+
+        // Populate form with generated data
+        function populateForm(data) {
+            document.getElementById('gen-title').value = data.title || '';
+            document.getElementById('gen-short-desc').value = data.short_description || '';
+            document.getElementById('gen-full-desc').value = data.full_description || '';
+            document.getElementById('gen-installation').value = data.installation || '';
+            document.getElementById('gen-usage').value = data.usage || '';
+            document.getElementById('gen-requirements').value = data.requirements || '';
+            document.getElementById('gen-version').value = data.version || '1.0.0';
+            document.getElementById('gen-compatibility').value = data.compatibility || '';
+        }
+
+        // Price type toggle
+        priceTypeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                priceInput.classList.toggle('hidden', radio.value !== 'paid');
+            });
+        });
+
+        // Back button
+        backBtn.addEventListener('click', () => goToStep(1));
+
+        // Upload another
+        uploadAnotherBtn.addEventListener('click', () => {
+            selectedFile = null;
+            generatedData = null;
+            scriptFileInput.value = '';
+            uploadPlaceholder.classList.remove('hidden');
+            fileSelected.classList.add('hidden');
+            generateBtn.disabled = true;
+            reviewForm.reset();
+            goToStep(1);
+        });
+
+        // Form submit (Publish)
+        reviewForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const publishBtn = document.getElementById('publish-btn');
+            publishBtn.disabled = true;
+            publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publishing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('action', 'create');
+                formData.append('name', document.getElementById('gen-title').value);
+                formData.append('application', document.querySelector('input[name="application"]:checked').value);
+                formData.append('version', document.getElementById('gen-version').value);
+                formData.append('short_description', document.getElementById('gen-short-desc').value);
+                formData.append('full_description', document.getElementById('gen-full-desc').value);
+                formData.append('installation_instructions', document.getElementById('gen-installation').value);
+                formData.append('usage_instructions', document.getElementById('gen-usage').value);
+                formData.append('system_requirements', document.getElementById('gen-requirements').value);
+                formData.append('compatibility', document.getElementById('gen-compatibility').value);
+                formData.append('price_type', document.querySelector('input[name="price_type"]:checked').value);
+                formData.append('price', document.getElementById('gen-price').value || 0);
+                formData.append('status', 'published');
+                formData.append('script_file', selectedFile);
+
+                const response = await fetch('../api/scripts.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    goToStep(3);
+                } else {
+                    showError(data.message || 'Failed to publish script');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred while publishing');
+            } finally {
+                publishBtn.disabled = false;
+                publishBtn.innerHTML = '<i class="fas fa-rocket mr-2"></i> Publish Script';
+            }
+        });
+
+        // Step navigation
+        function goToStep(step) {
+            step1.classList.add('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+
+            document.getElementById('step1-indicator').className = 'step-indicator ' + (step >= 1 ? (step > 1 ? 'completed' : 'active') : 'pending');
+            document.getElementById('step2-indicator').className = 'step-indicator ' + (step >= 2 ? (step > 2 ? 'completed' : 'active') : 'pending');
+            document.getElementById('step3-indicator').className = 'step-indicator ' + (step >= 3 ? 'active' : 'pending');
+
+            if (step === 1) step1.classList.remove('hidden');
+            if (step === 2) step2.classList.remove('hidden');
+            if (step === 3) step3.classList.remove('hidden');
+        }
+
+        // Error handling
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        // Utility
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+    </script>
+</body>
+</html>

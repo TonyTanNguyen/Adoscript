@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Adoscript</title>
+
+    <!-- Prevent indexing during development -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/Horizontal_pos.svg" alt="Adoscript" class="h-10">
+                </a>
+                <div class="flex items-center space-x-4 text-sm text-gray-600">
+                    <i class="fas fa-lock text-green-600"></i>
+                    <span>Secure Checkout</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-20">
+            <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+            <p class="text-gray-600">Loading checkout...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden text-center py-20">
+            <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Unable to load checkout</h2>
+            <p id="error-message" class="text-gray-600 mb-6">Something went wrong.</p>
+            <a href="scripts.html" class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> Browse Scripts
+            </a>
+        </div>
+
+        <!-- Checkout Content -->
+        <div id="checkout-content" class="hidden">
+            <h1 class="text-2xl font-bold text-gray-900 mb-8">Complete Your Purchase</h1>
+
+            <div class="grid md:grid-cols-5 gap-8">
+                <!-- Order Summary -->
+                <div class="md:col-span-2 order-2 md:order-1">
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+
+                        <div class="flex items-start gap-4 pb-4 border-b">
+                            <div id="script-icon" class="w-12 h-12 rounded-lg flex items-center justify-center bg-gray-100">
+                                <i class="fas fa-file-code text-gray-400 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 id="script-name" class="font-medium text-gray-900">Script Name</h3>
+                                <p id="script-app" class="text-sm text-gray-500">Application</p>
+                            </div>
+                        </div>
+
+                        <div class="py-4 space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span id="subtotal" class="text-gray-900">$0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Processing Fee</span>
+                                <span class="text-gray-900">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t flex justify-between">
+                            <span class="font-semibold text-gray-900">Total</span>
+                            <span id="total" class="text-xl font-bold text-primary">$0.00</span>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
+                                <div class="text-sm">
+                                    <p class="font-medium text-green-800">Instant Download</p>
+                                    <p class="text-green-700">You'll get immediate access after payment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="md:col-span-3 order-1 md:order-2">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Payment Details</h2>
+
+                        <!-- Email Input -->
+                        <div class="mb-6">
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address <span class="text-red-500">*</span>
+                            </label>
+                            <input type="email" id="email" name="email" required
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                   placeholder="your@email.com">
+                            <p class="text-sm text-gray-500 mt-1">Download link will be sent to this email</p>
+                        </div>
+
+                        <!-- PayPal Button Container -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Payment Method</label>
+                            <div id="paypal-button-container" class="min-h-[150px] flex items-center justify-center">
+                                <i class="fas fa-spinner fa-spin text-2xl text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Security Info -->
+                        <div class="flex items-center gap-4 text-sm text-gray-500 pt-4 border-t">
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-lock"></i>
+                                <span>Secure Payment</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <i class="fab fa-paypal text-blue-600"></i>
+                                <span>PayPal Protected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Terms -->
+                    <p class="text-sm text-gray-500 mt-4 text-center">
+                        By completing this purchase, you agree to our
+                        <a href="#" class="text-primary hover:underline">Terms of Service</a> and
+                        <a href="#" class="text-primary hover:underline">Refund Policy</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PayPal SDK (loaded dynamically) -->
+    <script>
+        const API_BASE = 'api';
+        let scriptData = null;
+        let paypalClientId = null;
+
+        // Initialize checkout
+        async function initCheckout() {
+            const params = new URLSearchParams(window.location.search);
+            const scriptId = params.get('id');
+            const slug = params.get('slug');
+
+            if (!scriptId && !slug) {
+                showError('No script specified');
+                return;
+            }
+
+            try {
+                // Get script details
+                let url = `${API_BASE}/scripts.php?action=public-get`;
+                if (slug) {
+                    url += `&slug=${slug}`;
+                } else {
+                    // Need to get by ID - use a different approach
+                    url = `${API_BASE}/scripts.php?action=public-get&id=${scriptId}`;
+                }
+
+                const scriptResponse = await fetch(url);
+                const scriptResult = await scriptResponse.json();
+
+                if (!scriptResult.success || !scriptResult.script) {
+                    showError('Script not found');
+                    return;
+                }
+
+                scriptData = scriptResult.script;
+
+                // Check if script is free
+                if (scriptData.price_type === 'free' || parseFloat(scriptData.price) <= 0) {
+                    window.location.href = `script-detail.html?slug=${scriptData.slug}`;
+                    return;
+                }
+
+                // Get PayPal client ID
+                const paypalResponse = await fetch(`${API_BASE}/paypal.php?action=get-client-id`);
+                const paypalResult = await paypalResponse.json();
+
+                if (!paypalResult.success || !paypalResult.client_id) {
+                    showError('Payment system is not configured');
+                    return;
+                }
+
+                paypalClientId = paypalResult.client_id;
+
+                // Render checkout
+                renderCheckout();
+
+                // Load PayPal SDK
+                loadPayPalSDK();
+
+            } catch (error) {
+                console.error('Checkout init error:', error);
+                showError('Failed to load checkout');
+            }
+        }
+
+        function renderCheckout() {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('checkout-content').classList.remove('hidden');
+
+            // Update script info
+            document.getElementById('script-name').textContent = scriptData.name;
+            document.getElementById('script-app').textContent = scriptData.application;
+
+            // Update icon based on app
+            const iconEl = document.getElementById('script-icon');
+            const appConfig = {
+                indesign: { bg: 'bg-pink-100', icon: 'fa-file-alt', color: 'text-pink-600' },
+                photoshop: { bg: 'bg-blue-100', icon: 'fa-image', color: 'text-blue-600' },
+                illustrator: { bg: 'bg-orange-100', icon: 'fa-pen-nib', color: 'text-orange-600' }
+            };
+            const config = appConfig[scriptData.application.toLowerCase()] || appConfig.indesign;
+            iconEl.className = `w-12 h-12 rounded-lg flex items-center justify-center ${config.bg}`;
+            iconEl.innerHTML = `<i class="fas ${config.icon} ${config.color} text-xl"></i>`;
+
+            // Update prices
+            const price = parseFloat(scriptData.price).toFixed(2);
+            document.getElementById('subtotal').textContent = `$${price}`;
+            document.getElementById('total').textContent = `$${price}`;
+
+            // Update page title
+            document.title = `Checkout - ${scriptData.name} - Adoscript`;
+        }
+
+        function loadPayPalSDK() {
+            const script = document.createElement('script');
+            script.src = `https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD`;
+            script.onload = initPayPalButtons;
+            script.onerror = () => showError('Failed to load PayPal');
+            document.head.appendChild(script);
+        }
+
+        function initPayPalButtons() {
+            const container = document.getElementById('paypal-button-container');
+            container.innerHTML = '';
+
+            paypal.Buttons({
+                style: {
+                    layout: 'vertical',
+                    color: 'blue',
+                    shape: 'rect',
+                    label: 'paypal'
+                },
+
+                // Create order on button click
+                createOrder: async function(data, actions) {
+                    const email = document.getElementById('email').value.trim();
+
+                    if (!email || !isValidEmail(email)) {
+                        alert('Please enter a valid email address');
+                        throw new Error('Invalid email');
+                    }
+
+                    const formData = new FormData();
+                    formData.append('script_id', scriptData.id);
+                    formData.append('email', email);
+
+                    const response = await fetch(`${API_BASE}/paypal.php?action=create-order`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        alert(result.error || 'Failed to create order');
+                        throw new Error(result.error);
+                    }
+
+                    return result.order_id;
+                },
+
+                // Capture payment after approval
+                onApprove: async function(data, actions) {
+                    container.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-primary mb-4"></i><p class="text-gray-600">Processing payment...</p></div>';
+
+                    const formData = new FormData();
+                    formData.append('order_id', data.orderID);
+
+                    const response = await fetch(`${API_BASE}/paypal.php?action=capture-order`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        // Redirect to success page with download token
+                        window.location.href = `order-success.html?token=${result.download_token}&script=${result.script_slug}`;
+                    } else {
+                        container.innerHTML = '<div class="text-center py-8 text-red-600"><i class="fas fa-exclamation-circle text-3xl mb-4"></i><p>Payment failed. Please try again.</p></div>';
+                        setTimeout(() => initPayPalButtons(), 3000);
+                    }
+                },
+
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    container.innerHTML = '<div class="text-center py-8 text-red-600"><i class="fas fa-exclamation-circle text-3xl mb-4"></i><p>Payment error. Please try again.</p></div>';
+                    setTimeout(() => initPayPalButtons(), 3000);
+                },
+
+                onCancel: function(data) {
+                    console.log('Payment cancelled');
+                }
+            }).render('#paypal-button-container');
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('error-state').classList.remove('hidden');
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initCheckout);
+    </script>
+</body>
+</html>
