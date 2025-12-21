@@ -144,13 +144,13 @@ function createScriptCard(script) {
 
     const thumbnail = script.thumbnail
         ? `<img src="uploads/images/${script.thumbnail}" alt="${script.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">`
-        : `<i class="${appConfig.icon} ${appConfig.textColor} text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>`;
+        : `<span class="text-white text-6xl font-bold opacity-90 group-hover:scale-110 transition-transform">${appConfig.abbrev}</span>`;
 
-    const thumbnailBg = script.thumbnail ? '' : `bg-gradient-to-br ${appConfig.gradient}`;
+    const thumbnailStyle = script.thumbnail ? '' : `background-color: ${appConfig.bgColor};`;
 
     return `
         <a href="script-detail.html?slug=${script.slug}" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden group">
-            <div class="aspect-video ${thumbnailBg} flex items-center justify-center overflow-hidden">
+            <div class="aspect-video flex items-center justify-center overflow-hidden" style="${thumbnailStyle}">
                 ${thumbnail}
             </div>
             <div class="p-6">
@@ -176,20 +176,26 @@ function getAppConfig(application) {
     const configs = {
         indesign: {
             icon: 'fas fa-file-alt',
+            abbrev: 'Id',
             textColor: 'text-indesign',
             badgeBg: 'bg-indesign/10',
+            bgColor: '#FF3366',
             gradient: 'from-indesign/20 to-indesign/5'
         },
         photoshop: {
             icon: 'fas fa-image',
+            abbrev: 'Ps',
             textColor: 'text-photoshop',
             badgeBg: 'bg-photoshop/10',
+            bgColor: '#31A8FF',
             gradient: 'from-photoshop/20 to-photoshop/5'
         },
         illustrator: {
             icon: 'fas fa-pen-nib',
+            abbrev: 'Ai',
             textColor: 'text-illustrator',
             badgeBg: 'bg-illustrator/10',
+            bgColor: '#FF9A00',
             gradient: 'from-illustrator/20 to-illustrator/5'
         }
     };
@@ -281,9 +287,9 @@ function renderScriptsGrid(scripts) {
 
         const thumbnail = script.thumbnail
             ? `<img src="uploads/images/${script.thumbnail}" alt="${script.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">`
-            : `<i class="${appConfig.icon} ${appConfig.textColor} text-6xl opacity-50 group-hover:scale-110 transition-transform"></i>`;
+            : `<span class="text-white text-6xl font-bold opacity-90 group-hover:scale-110 transition-transform">${appConfig.abbrev}</span>`;
 
-        const thumbnailBg = script.thumbnail ? '' : `bg-gradient-to-br ${appConfig.gradient}`;
+        const thumbnailStyle = script.thumbnail ? '' : `background-color: ${appConfig.bgColor};`;
 
         return `
             <a href="script-detail.html?slug=${script.slug}"
@@ -294,7 +300,7 @@ function renderScriptsGrid(scripts) {
                data-downloads="${script.downloads || 0}"
                data-name="${escapeHtml(script.name)}"
                data-date="${new Date(script.created_at).getTime()}">
-                <div class="aspect-video ${thumbnailBg} flex items-center justify-center overflow-hidden">
+                <div class="aspect-video flex items-center justify-center overflow-hidden" style="${thumbnailStyle}">
                     ${thumbnail}
                 </div>
                 <div class="p-6">
@@ -448,6 +454,9 @@ function renderScriptDetail(script) {
     // Update images gallery
     if (script.images && script.images.length > 0) {
         renderImageGallery(script.images);
+    } else {
+        // Show app abbreviation placeholder when no images
+        renderImagePlaceholder(script.application);
     }
 
     // Update videos if any
@@ -459,11 +468,14 @@ function renderScriptDetail(script) {
 // Render image gallery
 function renderImageGallery(images) {
     const mainImage = document.getElementById('main-image');
+    const placeholder = document.getElementById('main-image-placeholder');
     const thumbnails = document.getElementById('image-thumbnails');
 
     if (mainImage && images.length > 0) {
         mainImage.src = `uploads/images/${images[0].image_path}`;
         mainImage.alt = 'Script screenshot';
+        mainImage.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
     }
 
     if (thumbnails && images.length > 1) {
@@ -474,6 +486,32 @@ function renderImageGallery(images) {
             </button>
         `).join('');
     }
+}
+
+// Render placeholder for scripts without images
+function renderImagePlaceholder(application) {
+    const container = document.querySelector('.aspect-video');
+    const placeholder = document.getElementById('main-image-placeholder');
+    const mainImage = document.getElementById('main-image');
+    const thumbnails = document.getElementById('image-thumbnails');
+
+    if (!container) return;
+
+    const appConfig = getAppConfig(application);
+
+    // Update container background with inline style
+    container.className = 'aspect-video flex items-center justify-center';
+    container.style.backgroundColor = appConfig.bgColor;
+
+    // Replace icon with abbreviation
+    if (placeholder) {
+        placeholder.className = 'text-white text-8xl font-bold opacity-90';
+        placeholder.innerHTML = appConfig.abbrev;
+    }
+
+    // Hide main image and thumbnails
+    if (mainImage) mainImage.classList.add('hidden');
+    if (thumbnails) thumbnails.classList.add('hidden');
 }
 
 // Switch main image
