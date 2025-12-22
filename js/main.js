@@ -46,9 +46,6 @@ async function loadHomepageContent() {
         if (data.success && data.scripts) {
             const scripts = data.scripts;
 
-            // Update stats
-            updateHomepageStats(scripts);
-
             // Render featured scripts (show first 6)
             renderFeaturedScripts(scripts.slice(0, 6));
 
@@ -60,21 +57,6 @@ async function loadHomepageContent() {
     } catch (error) {
         console.error('Error loading homepage content:', error);
         showNoScriptsMessage();
-    }
-}
-
-// Update homepage stats
-function updateHomepageStats(scripts) {
-    const statScripts = document.getElementById('stat-scripts');
-    const statDownloads = document.getElementById('stat-downloads');
-
-    if (statScripts) {
-        statScripts.textContent = scripts.length;
-    }
-
-    if (statDownloads) {
-        const totalDownloads = scripts.reduce((sum, s) => sum + (parseInt(s.downloads) || 0), 0);
-        statDownloads.textContent = formatNumber(totalDownloads);
     }
 }
 
