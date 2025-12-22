@@ -8,10 +8,28 @@
 
 function loadEnv($path = null) {
     if ($path === null) {
-        $path = dirname(__DIR__) . '/.env';
+        // Try multiple possible locations
+        $possiblePaths = [
+            dirname(__DIR__) . '/.env',                    // Standard: project root
+            $_SERVER['DOCUMENT_ROOT'] . '/.env',           // Document root
+            dirname($_SERVER['DOCUMENT_ROOT']) . '/.env',  // Above document root (more secure)
+        ];
+
+        foreach ($possiblePaths as $tryPath) {
+            if (file_exists($tryPath)) {
+                $path = $tryPath;
+                break;
+            }
+        }
+
+        if ($path === null) {
+            error_log('ENV Loader: .env file not found in any location. Tried: ' . implode(', ', $possiblePaths));
+            return false;
+        }
     }
 
     if (!file_exists($path)) {
+        error_log('ENV Loader: .env file not found at: ' . $path);
         return false;
     }
 
