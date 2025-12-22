@@ -16,32 +16,43 @@ $envContent = file_exists($envPath) ? file_get_contents($envPath) : 'FILE NOT FO
 // Check first few bytes for BOM or issues
 $firstBytes = file_exists($envPath) ? bin2hex(substr(file_get_contents($envPath), 0, 10)) : '';
 
-// Get first 3 lines (redacted)
+// Get ALL lines with key=value (redacted values)
 $lines = file_exists($envPath) ? file($envPath, FILE_IGNORE_NEW_LINES) : [];
-$sampleLines = [];
-foreach (array_slice($lines, 0, 5) as $line) {
-    // Show structure but hide values
-    if (strpos($line, '=') !== false) {
+$keyValueLines = [];
+foreach ($lines as $i => $line) {
+    $line = trim($line);
+    if (!empty($line) && strpos($line, '#') !== 0 && strpos($line, '=') !== false) {
         list($key, $val) = explode('=', $line, 2);
-        $sampleLines[] = trim($key) . '=' . (strlen($val) > 0 ? '[' . strlen($val) . ' chars]' : '[EMPTY]');
-    } else {
-        $sampleLines[] = substr($line, 0, 30) . (strlen($line) > 30 ? '...' : '');
+        $keyValueLines[] = 'Line ' . ($i+1) . ': ' . trim($key) . '=' . (strlen($val) > 0 ? '[' . strlen($val) . ' chars]' : '[EMPTY]');
+    }
+}
+
+// Manual parse test
+$manualParseResult = [];
+foreach ($lines as $line) {
+    $line = trim($line);
+    if (empty($line) || strpos($line, '#') === 0) continue;
+    if (strpos($line, '=') !== false) {
+        list($key, $value) = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+        $manualParseResult[$key] = strlen($value) . ' chars';
     }
 }
 
 $debug = [
-    'document_root' => $_SERVER['DOCUMENT_ROOT'] ?? 'not set',
     'env_path' => $envPath,
     'env_exists' => file_exists($envPath) ? 'YES' : 'NO',
-    'env_readable' => is_readable($envPath) ? 'YES' : 'NO',
     'env_size' => file_exists($envPath) ? filesize($envPath) . ' bytes' : 'N/A',
-    'first_bytes_hex' => $firstBytes,
-    'has_bom' => (substr($firstBytes, 0, 6) === 'efbbbf') ? 'YES - BOM DETECTED!' : 'NO',
-    'sample_lines' => $sampleLines,
-    'line_ending' => file_exists($envPath) ? (strpos($envContent, "\r\n") !== false ? 'CRLF (Windows)' : 'LF (Unix)') : 'N/A',
-    'claude_api_key_loaded' => defined('CLAUDE_API_KEY') && !empty(CLAUDE_API_KEY) ? 'YES (length: ' . strlen(CLAUDE_API_KEY) . ')' : 'NO',
-    'getenv_test' => getenv('CLAUDE_API_KEY') ? 'YES' : 'NO',
-    'env_array_test' => isset($_ENV['CLAUDE_API_KEY']) ? 'YES' : 'NO',
+    'total_lines' => count($lines),
+    'key_value_lines' => $keyValueLines,
+    'manual_parse_keys' => array_keys($manualParseResult),
+    'manual_parse_result' => $manualParseResult,
+    'env_loader_exists' => function_exists('loadEnv') ? 'YES' : 'NO',
+    'env_function_exists' => function_exists('env') ? 'YES' : 'NO',
+    'claude_loaded_via_define' => defined('CLAUDE_API_KEY') ? (empty(CLAUDE_API_KEY) ? 'DEFINED BUT EMPTY' : 'YES') : 'NOT DEFINED',
+    'getenv_claude' => getenv('CLAUDE_API_KEY') ? 'YES' : 'NO',
+    'env_array_claude' => isset($_ENV['CLAUDE_API_KEY']) ? 'YES' : 'NO',
 ];
 
 successResponse(['debug' => $debug]);
