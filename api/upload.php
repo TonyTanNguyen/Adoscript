@@ -23,6 +23,10 @@ switch ($action) {
         requireAuthApi();
         uploadMultipleImages();
         break;
+    case 'upload-image':
+        requireAuthApi();
+        uploadScriptImage();
+        break;
     case 'download':
         serveDownload();
         break;
@@ -78,6 +82,75 @@ function uploadScript() {
         'file_size' => formatFileSize($file['size']),
         'original_name' => $file['name']
     ], 'File uploaded successfully');
+}
+
+/**
+ * Upload image for a script and save to database
+ */
+function uploadScriptImage() {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        errorResponse('Method not allowed', 405);
+    }
+
+    $scriptId = intval($_POST['script_id'] ?? 0);
+    $displayOrder = intval($_POST['display_order'] ?? 0);
+
+    if (!$scriptId) {
+        errorResponse('Script ID is required');
+    }
+
+    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+        $errorMessage = isset($_FILES['image']) ? getUploadErrorMessage($_FILES['image']['error']) : 'No file uploaded';
+        errorResponse($errorMessage);
+    }
+
+    $file = $_FILES['image'];
+
+    // Validate file type
+    if (!isValidImageFile($file['name'])) {
+        errorResponse('Invalid file type. Allowed: ' . implode(', ', ALLOWED_IMAGE_TYPES));
+    }
+
+    // Validate file size
+    if ($file['size'] > MAX_IMAGE_SIZE) {
+        errorResponse('File too large. Maximum size: ' . formatFileSize(MAX_IMAGE_SIZE));
+    }
+
+    // Generate unique filename
+    $filename = generateUniqueFilename($file['name']);
+    $targetPath = IMAGES_PATH . $filename;
+
+    // Ensure directory exists
+    if (!is_dir(IMAGES_PATH)) {
+        mkdir(IMAGES_PATH, 0755, true);
+    }
+
+    // Move uploaded file
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        errorResponse('Failed to save file');
+    }
+
+    // Save to database
+    try {
+        require_once __DIR__ . '/../includes/db.php';
+        $db = getDB();
+
+        $stmt = $db->prepare("INSERT INTO script_images (script_id, image_path, display_order) VALUES (?, ?, ?)");
+        $stmt->execute([$scriptId, $filename, $displayOrder]);
+
+        successResponse([
+            'image_id' => $db->lastInsertId(),
+            'image_path' => $filename,
+            'url' => 'uploads/images/' . $filename
+        ], 'Image uploaded successfully');
+
+    } catch (PDOException $e) {
+        // Delete the uploaded file if database insert fails
+        if (file_exists($targetPath)) {
+            unlink($targetPath);
+        }
+        errorResponse('Database error: ' . $e->getMessage(), 500);
+    }
 }
 
 /**

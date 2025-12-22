@@ -249,6 +249,27 @@
                     <input type="number" id="gen-price" step="0.01" min="0" value="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                 </div>
 
+                <!-- Image Upload Section -->
+                <div class="border-t pt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        <i class="fas fa-images mr-2 text-primary"></i>Script Images (Optional)
+                    </label>
+                    <p class="text-sm text-gray-500 mb-4">Add screenshots or preview images for your script. First image will be the thumbnail.</p>
+
+                    <!-- Image Upload Zone -->
+                    <div id="image-upload-zone" class="upload-zone rounded-lg p-6 text-center cursor-pointer mb-4">
+                        <input type="file" id="image-files" accept="image/*" multiple class="hidden">
+                        <i class="fas fa-image text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-600 text-sm">Click or drag images here</p>
+                        <p class="text-xs text-gray-400 mt-1">PNG, JPG, GIF, WebP (max 5MB each)</p>
+                    </div>
+
+                    <!-- Image Previews -->
+                    <div id="image-previews" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <!-- Previews will be added here dynamically -->
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="flex space-x-4 pt-4">
                     <button type="button" id="back-btn" class="flex-1 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
@@ -291,6 +312,7 @@
         // State
         let selectedFile = null;
         let generatedData = null;
+        let selectedImages = [];
 
         // DOM Elements
         const uploadZone = document.getElementById('upload-zone');
@@ -439,6 +461,95 @@
             });
         });
 
+        // Image upload handling
+        const imageUploadZone = document.getElementById('image-upload-zone');
+        const imageFilesInput = document.getElementById('image-files');
+        const imagePreviews = document.getElementById('image-previews');
+
+        imageUploadZone.addEventListener('click', () => imageFilesInput.click());
+
+        imageUploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadZone.classList.add('dragover');
+        });
+
+        imageUploadZone.addEventListener('dragleave', () => {
+            imageUploadZone.classList.remove('dragover');
+        });
+
+        imageUploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadZone.classList.remove('dragover');
+            handleImageFiles(e.dataTransfer.files);
+        });
+
+        imageFilesInput.addEventListener('change', (e) => {
+            handleImageFiles(e.target.files);
+        });
+
+        function handleImageFiles(files) {
+            for (const file of files) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showError('Please select only image files');
+                    continue;
+                }
+
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Image files must be under 5MB');
+                    continue;
+                }
+
+                // Check for duplicates
+                if (selectedImages.some(img => img.name === file.name && img.size === file.size)) {
+                    continue;
+                }
+
+                selectedImages.push(file);
+                addImagePreview(file, selectedImages.length - 1);
+            }
+            hideError();
+        }
+
+        function addImagePreview(file, index) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'relative group';
+                div.dataset.index = index;
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview" class="w-full aspect-square object-cover rounded-lg border border-gray-200">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                        <button type="button" class="remove-image-btn text-white bg-red-500 hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    ${index === 0 ? '<span class="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded">Thumbnail</span>' : ''}
+                `;
+                imagePreviews.appendChild(div);
+
+                // Add remove handler
+                div.querySelector('.remove-image-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeImage(index);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(index) {
+            selectedImages = selectedImages.filter((_, i) => i !== index);
+            refreshImagePreviews();
+        }
+
+        function refreshImagePreviews() {
+            imagePreviews.innerHTML = '';
+            selectedImages.forEach((file, index) => {
+                addImagePreview(file, index);
+            });
+        }
+
         // Back button
         backBtn.addEventListener('click', () => goToStep(1));
 
@@ -446,7 +557,10 @@
         uploadAnotherBtn.addEventListener('click', () => {
             selectedFile = null;
             generatedData = null;
+            selectedImages = [];
             scriptFileInput.value = '';
+            imageFilesInput.value = '';
+            imagePreviews.innerHTML = '';
             uploadPlaceholder.classList.remove('hidden');
             fileSelected.classList.add('hidden');
             generateBtn.disabled = true;
@@ -487,6 +601,10 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Upload images if any
+                    if (selectedImages.length > 0 && data.script_id) {
+                        await uploadImages(data.script_id);
+                    }
                     goToStep(3);
                 } else {
                     showError(data.message || 'Failed to publish script');
@@ -499,6 +617,26 @@
                 publishBtn.innerHTML = '<i class="fas fa-rocket mr-2"></i> Publish Script';
             }
         });
+
+        // Upload images for a script
+        async function uploadImages(scriptId) {
+            for (let i = 0; i < selectedImages.length; i++) {
+                const imageFormData = new FormData();
+                imageFormData.append('action', 'upload-image');
+                imageFormData.append('script_id', scriptId);
+                imageFormData.append('image', selectedImages[i]);
+                imageFormData.append('display_order', i);
+
+                try {
+                    await fetch('../api/upload.php', {
+                        method: 'POST',
+                        body: imageFormData
+                    });
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                }
+            }
+        }
 
         // Step navigation
         function goToStep(step) {
