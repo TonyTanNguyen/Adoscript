@@ -1,0 +1,24 @@
+# Protect sensitive files from web access
+<FilesMatch "^\.env|\.env\..*$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect includes directory
+<FilesMatch "env-loader\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect against common attacks
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
