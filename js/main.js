@@ -405,6 +405,19 @@ function renderScriptDetail(script) {
     const compatEl = document.getElementById('script-compatibility');
     if (compatEl) compatEl.textContent = script.compatibility || 'Not specified';
 
+    // Update tags
+    const tagsSection = document.getElementById('script-tags-section');
+    const tagsContainer = document.getElementById('script-tags');
+    if (tagsContainer && script.tags && script.tags.trim()) {
+        const tags = script.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        if (tags.length > 0) {
+            tagsContainer.innerHTML = tags.map(tag =>
+                `<span class="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">${tag}</span>`
+            ).join('');
+            if (tagsSection) tagsSection.classList.remove('hidden');
+        }
+    }
+
     // Update changelog
     const changelogEl = document.getElementById('script-changelog');
     if (changelogEl) changelogEl.innerHTML = script.changelog || 'No changelog available.';
