@@ -771,6 +771,7 @@ Return a JSON object with the following fields:
 - requirements: System requirements (e.g., "Adobe {$application} CC 2020 or later")
 - compatibility: Compatibility information (e.g., "CC 2020, CC 2021, CC 2022, CC 2023, CC 2024")
 - version: Suggested version number based on code maturity (default "1.0.0")
+- tags: Comma-separated list of relevant tags for search and categorization (e.g., "automation, batch processing, text, images, export"). Include 3-8 tags that describe the script's functionality, use cases, and features.
 
 Be specific and helpful. Extract any comments or documentation from the code to inform your descriptions.
 If the code has version info, use it. If there are @author or @description comments, incorporate them.
@@ -849,7 +850,8 @@ PROMPT;
         'usage' => $generated['usage'] ?? '',
         'requirements' => $generated['requirements'] ?? "Adobe $application CC 2020 or later",
         'compatibility' => $generated['compatibility'] ?? 'CC 2020+',
-        'version' => $generated['version'] ?? '1.0.0'
+        'version' => $generated['version'] ?? '1.0.0',
+        'tags' => $generated['tags'] ?? ''
     ];
 }
 
@@ -885,6 +887,9 @@ function generatePlaceholderData($code, $application) {
         $version = trim($matches[1]);
     }
 
+    // Generate default tags based on application
+    $defaultTags = strtolower($application) . ', automation, script';
+
     return [
         'title' => $title,
         'short_description' => $description ?: "A useful script for Adobe $application",
@@ -893,7 +898,8 @@ function generatePlaceholderData($code, $application) {
         'usage' => "<p>Instructions for using this script will be added.</p>",
         'requirements' => "Adobe $application CC 2020 or later",
         'compatibility' => 'CC 2020, CC 2021, CC 2022, CC 2023, CC 2024',
-        'version' => $version
+        'version' => $version,
+        'tags' => $defaultTags
     ];
 }
 
