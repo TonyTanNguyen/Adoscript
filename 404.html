@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Adoscript</title>
+    <meta name="description" content="The page you're looking for doesn't exist. Return to Adoscript's homepage.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'adobe-red': '#FF0000',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/Horizontal_pos.svg" alt="Adoscript" class="h-10">
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="scripts.html" class="text-gray-600 hover:text-primary transition-colors">Scripts</a>
+                    <a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bars text-gray-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-600">Home</a>
+                <a href="scripts.html" class="block py-2 text-gray-600">Scripts</a>
+                <a href="about.html" class="block py-2 text-gray-600">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 404 Content -->
+    <main class="flex-grow flex items-center justify-center py-16">
+        <div class="max-w-2xl mx-auto px-4 text-center">
+            <div class="mb-8">
+                <span class="text-9xl font-bold text-primary/20">404</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Page Not Found</h1>
+            <p class="text-xl text-gray-600 mb-8">
+                Oops! The page you're looking for doesn't exist or has been moved.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html" class="inline-flex items-center justify-center px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
+                    <i class="fas fa-home mr-2"></i>
+                    Go to Homepage
+                </a>
+                <a href="scripts.html" class="inline-flex items-center justify-center px-8 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors">
+                    <i class="fas fa-search mr-2"></i>
+                    Browse Scripts
+                </a>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-200">
+                <p class="text-gray-500 mb-4">Looking for something specific?</p>
+                <div class="flex flex-wrap justify-center gap-4 text-sm">
+                    <a href="scripts.html?app=indesign" class="text-indesign hover:underline">InDesign Scripts</a>
+                    <a href="scripts.html?app=photoshop" class="text-photoshop hover:underline">Photoshop Scripts</a>
+                    <a href="scripts.html?app=illustrator" class="text-illustrator hover:underline">Illustrator Scripts</a>
+                    <a href="about.html" class="text-primary hover:underline">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2025 Adoscript. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm">
+                    <a href="privacy-policy.html" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

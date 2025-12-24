@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Adoscript | Adobe Scripts Marketplace</title>
+    <meta name="description" content="Get in touch with Adoscript for support, custom script requests, or general inquiries about our Adobe scripts marketplace.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Contact Us - Adoscript">
+    <meta property="og:description" content="Get in touch with Adoscript for support or inquiries.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://adoscript.com/contact.html">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'adobe-red': '#FF0000',
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center">
+                    <img src="assets/Horizontal_pos.svg" alt="Adoscript" class="h-10">
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-primary transition-colors">Home</a>
+                    <a href="scripts.html" class="text-gray-600 hover:text-primary transition-colors">Scripts</a>
+                    <a href="about.html" class="text-gray-600 hover:text-primary transition-colors">About</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bars text-gray-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-3 space-y-2">
+                <a href="index.html" class="block py-2 text-gray-600">Home</a>
+                <a href="scripts.html" class="block py-2 text-gray-600">Scripts</a>
+                <a href="about.html" class="block py-2 text-gray-600">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                Have questions or need help? We're here for you!
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="py-16 lg:py-24">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Contact Info -->
+                <div class="lg:col-span-1">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+                    <p class="text-gray-600 mb-8">
+                        Whether you need technical support, have a question about our scripts, or want to discuss a custom project, we'd love to hear from you.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-envelope text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-1">Email</h3>
+                                <a href="mailto:support@adoscript.com" class="text-primary hover:underline">support@adoscript.com</a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-clock text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-1">Response Time</h3>
+                                <p class="text-gray-600">Within 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fab fa-facebook text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 mb-1">Social Media</h3>
+                                <a href="https://www.facebook.com/profile.php?id=61556173882323" target="_blank" class="text-primary hover:underline">Follow us on Facebook</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 p-6 bg-primary/5 rounded-xl">
+                        <h3 class="font-semibold text-gray-900 mb-2">
+                            <i class="fas fa-lightbulb text-primary mr-2"></i>
+                            Looking for Custom Scripts?
+                        </h3>
+                        <p class="text-gray-600 text-sm">
+                            We offer custom script development for your specific workflow needs. Describe your requirements in the form and we'll get back to you with a quote.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-sm p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
+                                    <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                                    <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="john@example.com">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                                <select id="subject" name="subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Select a topic</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="sales">Sales Inquiry</option>
+                                    <option value="custom">Custom Script Request</option>
+                                    <option value="feedback">Feedback</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                                <textarea id="message" name="message" rows="6" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none" placeholder="How can we help you?"></textarea>
+                            </div>
+
+                            <!-- Success/Error Message -->
+                            <div id="form-message" class="hidden rounded-lg p-4 text-center"></div>
+
+                            <div>
+                                <button type="submit" id="submit-btn" class="w-full md:w-auto inline-flex items-center justify-center px-8 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <a href="index.html" class="inline-block mb-4">
+                        <img src="assets/Horizontal_neg.svg" alt="Adoscript" class="h-10">
+                    </a>
+                    <p class="text-sm">High-quality Adobe scripts for creative professionals.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="scripts.html" class="hover:text-white transition-colors">All Scripts</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="contact.html" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="scripts.html?app=indesign" class="hover:text-white transition-colors">InDesign Scripts</a></li>
+                        <li><a href="scripts.html?app=photoshop" class="hover:text-white transition-colors">Photoshop Scripts</a></li>
+                        <li><a href="scripts.html?app=illustrator" class="hover:text-white transition-colors">Illustrator Scripts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="https://www.facebook.com/profile.php?id=61556173882323" target="_blank" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                    <p class="text-sm">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <a href="mailto:support@adoscript.com" class="hover:text-white transition-colors">support@adoscript.com</a>
+                    </p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm">&copy; 2025 Adoscript. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm">
+                    <a href="privacy-policy.html" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Contact Form Handler
+        document.getElementById('contact-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = this;
+            const submitBtn = document.getElementById('submit-btn');
+            const messageDiv = document.getElementById('form-message');
+
+            // Get form data
+            const formData = new FormData(form);
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+            messageDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('api/contact.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success message
+                    messageDiv.className = 'rounded-lg p-4 text-center bg-green-100 text-green-800';
+                    messageDiv.innerHTML = '<i class="fas fa-check-circle mr-2"></i>' + result.message;
+                    messageDiv.classList.remove('hidden');
+
+                    // Reset form
+                    form.reset();
+                } else {
+                    // Show error message
+                    messageDiv.className = 'rounded-lg p-4 text-center bg-red-100 text-red-800';
+                    messageDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i>' + (result.error || 'Failed to send message');
+                    messageDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                // Show error message
+                messageDiv.className = 'rounded-lg p-4 text-center bg-red-100 text-red-800';
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-circle mr-2"></i> Network error. Please try again.';
+                messageDiv.classList.remove('hidden');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Send Message';
+            }
+        });
+    </script>
+</body>
+</html>

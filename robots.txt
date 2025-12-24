@@ -1,5 +1,20 @@
-# Block all search engines from indexing this site
-# Remove or modify this file when ready to launch
+# Adoscript robots.txt
+# Allow search engines to crawl and index the site
 
 User-agent: *
-Disallow: /
+Allow: /
+
+# Sitemap location
+Sitemap: https://adoscript.com/sitemap.xml
+
+# Disallow admin and API directories
+Disallow: /admin/
+Disallow: /api/
+Disallow: /data/
+Disallow: /includes/
+Disallow: /uploads/scripts/
+
+# Disallow checkout and order pages (transactional)
+Disallow: /checkout.html
+Disallow: /order-success.html
+Disallow: /download.php
