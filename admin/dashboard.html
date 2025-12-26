@@ -109,7 +109,7 @@
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-file-code text-blue-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm font-medium">+2 new</span>
+                        <span id="published-scripts" class="text-gray-500 text-sm font-medium"></span>
                     </div>
                     <div id="total-scripts" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Scripts</div>
@@ -120,7 +120,6 @@
                         <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-download text-green-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm font-medium">+12%</span>
                     </div>
                     <div id="total-downloads" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Downloads</div>
@@ -131,7 +130,6 @@
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-shopping-cart text-purple-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm font-medium">+5 this week</span>
                     </div>
                     <div id="total-orders" class="text-2xl font-bold text-gray-900 mb-1">0</div>
                     <div class="text-gray-600 text-sm">Total Orders</div>
@@ -142,7 +140,6 @@
                         <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
                             <i class="fas fa-dollar-sign text-yellow-600 text-xl"></i>
                         </div>
-                        <span class="text-green-500 text-sm font-medium">+8%</span>
                     </div>
                     <div id="total-revenue" class="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
                     <div class="text-gray-600 text-sm">Total Revenue</div>
@@ -225,6 +222,7 @@
                 const stats = await fetchStats();
                 if (stats.success) {
                     document.getElementById('total-scripts').textContent = stats.total_scripts || 0;
+                    document.getElementById('published-scripts').textContent = (stats.published_scripts || 0) + ' published';
                     document.getElementById('total-downloads').textContent = formatNumber(stats.total_downloads || 0);
                     document.getElementById('total-orders').textContent = stats.total_orders || 0;
                     document.getElementById('total-revenue').textContent = '$' + (stats.total_revenue || 0).toFixed(2);
