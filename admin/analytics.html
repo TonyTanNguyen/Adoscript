@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Admin Panel</title>
+
+    <!-- Prevent indexing -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indesign': '#FF3366',
+                        'photoshop': '#31A8FF',
+                        'illustrator': '#FF9A00',
+                        'primary': '#7f22ea',
+                        'primary-dark': '#6b1dd1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="flex items-center justify-between px-6 h-16">
+            <!-- Logo -->
+            <a href="dashboard.html" class="flex items-center space-x-2">
+                <img src="../assets/Horizontal_pos.svg" alt="Adoscript" class="h-10">
+                <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">Admin</span>
+            </a>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-4">
+                <a href="../index.html" target="_blank" class="text-gray-600 hover:text-primary transition-colors" title="View Site">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                        <span class="text-primary text-sm font-semibold">A</span>
+                    </div>
+                    <span class="text-gray-700 font-medium hidden sm:block">Admin</span>
+                </div>
+                <a href="login.html" class="text-gray-600 hover:text-red-500 transition-colors" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar bg-white shadow-sm p-4 hidden md:block">
+            <nav class="space-y-1">
+                <a href="dashboard.html" class="admin-nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="analytics.html" class="admin-nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="scripts.html" class="admin-nav-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>All Scripts</span>
+                </a>
+                <a href="quick-upload.html" class="admin-nav-item">
+                    <i class="fas fa-magic"></i>
+                    <span>Quick Upload (AI)</span>
+                </a>
+                <a href="upload.html" class="admin-nav-item">
+                    <i class="fas fa-upload"></i>
+                    <span>Manual Upload</span>
+                </a>
+                <a href="orders.html" class="admin-nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="settings.html" class="admin-nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">Analytics</h1>
+                <p class="text-gray-600">View your website traffic and user behavior.</p>
+            </div>
+
+            <!-- Setup Section (shown when not configured) -->
+            <div id="setup-section">
+                <!-- Quick Actions -->
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- Open Google Analytics -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fab fa-google text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-2">Google Analytics Dashboard</h3>
+                                <p class="text-gray-600 text-sm mb-4">Open your GA4 dashboard directly to view all reports.</p>
+                                <a href="https://analytics.google.com" target="_blank"
+                                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                    <i class="fas fa-external-link-alt mr-2"></i>
+                                    Open Google Analytics
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Embed Looker Studio -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-chart-pie text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-900 mb-2">Embed Analytics Report</h3>
+                                <p class="text-gray-600 text-sm mb-4">Embed a Looker Studio report to view analytics here.</p>
+                                <button onclick="showEmbedSetup()"
+                                   class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors text-sm">
+                                    <i class="fas fa-code mr-2"></i>
+                                    Configure Embed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Embed Configuration (hidden by default) -->
+                <div id="embed-config" class="hidden bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-cog mr-2 text-primary"></i>
+                        Configure Embedded Report
+                    </h3>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <h4 class="font-medium text-blue-800 mb-2">How to get your embed URL:</h4>
+                        <ol class="text-blue-700 text-sm space-y-2 list-decimal list-inside">
+                            <li>Go to <a href="https://lookerstudio.google.com" target="_blank" class="underline">Looker Studio</a> (formerly Data Studio)</li>
+                            <li>Create a new report or use a template connected to your GA4</li>
+                            <li>Click <strong>Share</strong> > <strong>Embed report</strong></li>
+                            <li>Enable embedding and copy the embed URL</li>
+                            <li>Paste the URL below</li>
+                        </ol>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Looker Studio Embed URL</label>
+                            <input type="url" id="embed-url" placeholder="https://lookerstudio.google.com/embed/reporting/..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                            <p class="text-xs text-gray-500 mt-1">The URL should start with https://lookerstudio.google.com/embed/</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="saveEmbed()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors text-sm">
+                                <i class="fas fa-save mr-2"></i>Save & Display
+                            </button>
+                            <button onclick="hideEmbedSetup()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-info-circle mr-2 text-primary"></i>
+                        Setting Up Google Analytics
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">1. Create GA4 Property</h4>
+                            <ul class="text-gray-600 text-sm space-y-1 list-disc list-inside">
+                                <li>Go to <a href="https://analytics.google.com" target="_blank" class="text-primary hover:underline">Google Analytics</a></li>
+                                <li>Click Admin > Create Property</li>
+                                <li>Follow the setup wizard</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">2. Add Tracking Code</h4>
+                            <ul class="text-gray-600 text-sm space-y-1 list-disc list-inside">
+                                <li>Get your Measurement ID (G-XXXXXXX)</li>
+                                <li>Add the gtag.js snippet to your site's &lt;head&gt;</li>
+                                <li>Verify data is being collected</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">3. Create Looker Studio Report</h4>
+                            <ul class="text-gray-600 text-sm space-y-1 list-disc list-inside">
+                                <li>Go to <a href="https://lookerstudio.google.com" target="_blank" class="text-primary hover:underline">Looker Studio</a></li>
+                                <li>Use a GA4 template or create custom</li>
+                                <li>Connect to your GA4 property</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-800 mb-2">4. Embed in Admin</h4>
+                            <ul class="text-gray-600 text-sm space-y-1 list-disc list-inside">
+                                <li>Share your Looker Studio report</li>
+                                <li>Enable embedding</li>
+                                <li>Paste the embed URL above</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Embedded Report (shown when configured) -->
+            <div id="report-section" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-4 flex items-center justify-between">
+                    <span class="text-gray-600 text-sm">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Looker Studio Report
+                    </span>
+                    <div class="flex gap-2">
+                        <button onclick="openFullscreen()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                            <i class="fas fa-expand mr-1"></i>
+                            Fullscreen
+                        </button>
+                        <button onclick="editEmbed()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                            <i class="fas fa-cog mr-1"></i>
+                            Settings
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <iframe id="analytics-iframe"
+                            src=""
+                            frameborder="0"
+                            style="width: 100%; height: 800px; border: 0;"
+                            allowfullscreen
+                            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+                    </iframe>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2">
+        <a href="dashboard.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="analytics.html" class="flex flex-col items-center py-2 px-4 text-primary">
+            <i class="fas fa-chart-line text-xl"></i>
+            <span class="text-xs mt-1">Analytics</span>
+        </a>
+        <a href="scripts.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-file-code text-xl"></i>
+            <span class="text-xs mt-1">Scripts</span>
+        </a>
+        <a href="orders.html" class="flex flex-col items-center py-2 px-4 text-gray-500">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span class="text-xs mt-1">Orders</span>
+        </a>
+    </nav>
+
+    <script src="../js/admin.js"></script>
+    <script>
+        const EMBED_KEY = 'analytics_embed_url';
+
+        // Check for saved embed URL on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUrl = localStorage.getItem(EMBED_KEY);
+            if (savedUrl) {
+                showReport(savedUrl);
+            }
+        });
+
+        function showEmbedSetup() {
+            document.getElementById('embed-config').classList.remove('hidden');
+            const savedUrl = localStorage.getItem(EMBED_KEY);
+            if (savedUrl) {
+                document.getElementById('embed-url').value = savedUrl;
+            }
+        }
+
+        function hideEmbedSetup() {
+            document.getElementById('embed-config').classList.add('hidden');
+        }
+
+        function saveEmbed() {
+            const url = document.getElementById('embed-url').value.trim();
+
+            if (!url) {
+                alert('Please enter an embed URL');
+                return;
+            }
+
+            if (!url.includes('lookerstudio.google.com')) {
+                alert('Please enter a valid Looker Studio embed URL');
+                return;
+            }
+
+            localStorage.setItem(EMBED_KEY, url);
+            showReport(url);
+            hideEmbedSetup();
+        }
+
+        function showReport(url) {
+            document.getElementById('setup-section').classList.add('hidden');
+            document.getElementById('report-section').classList.remove('hidden');
+            document.getElementById('analytics-iframe').src = url;
+        }
+
+        function editEmbed() {
+            document.getElementById('setup-section').classList.remove('hidden');
+            document.getElementById('report-section').classList.add('hidden');
+            showEmbedSetup();
+        }
+
+        function openFullscreen() {
+            const iframe = document.getElementById('analytics-iframe');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.webkitRequestFullscreen) {
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) {
+                iframe.msRequestFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>
